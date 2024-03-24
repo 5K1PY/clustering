@@ -29,7 +29,7 @@ class GridHashing {
         hash_poly = numeric_limits<ull>::max() / cell_size + 1;
         hash_mod = ull(1e9)+7;
     }
-    void hash(point& p) {
+    void hash(tagged_point& p) {
         vector<ull> cell(dimension);
         for (int i=0; i<dimension; i++) {
             cell[i] = (p.coords[i] + offsets[i]) / cell_size;
