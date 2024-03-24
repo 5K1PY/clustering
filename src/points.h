@@ -27,13 +27,10 @@ struct point {
 struct tagged_point : point {
     ull hash;
 
-    tagged_point(int dim) : point(dim) {
-    }    
+    tagged_point(int dim) : point(dim) {}
 };
 
-vector<tagged_point> load_points() {
-    int n, dim;
-    cin >> n >> dim;
+vector<tagged_point> load_points(int n, int dim) {
     vector<tagged_point> points(n, tagged_point(dim));
     for (int i=0; i<n; i++) {
         for (int j=0; j<dim; j++) {

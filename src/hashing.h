@@ -3,11 +3,9 @@
 #include <random>
 
 #include "points.h"
+#include "random.h"
 
 using namespace std;
-
-mt19937 rng(76901);
-uniform_int_distribution<ull> ull_dist;
 
 class GridHashing {
   private:
@@ -23,7 +21,7 @@ class GridHashing {
 
         offsets.resize(dimension, 0);
         for (int i=0; i<dimension; i++) {
-            offsets[i] = ull_dist(rng);
+            offsets[i] = randRange((ull) 0, numeric_limits<ull>::max());
         }
 
         hash_poly = numeric_limits<ull>::max() / cell_size + 1;
