@@ -9,11 +9,13 @@ using namespace std;
 
 typedef unsigned long long ull;
 
+constexpr ull MAX_COORD = 1e9;
+constexpr ull CLUSTER_RADIUS = 1e3;
 
 point rand_point(int dim) {
     point p(dim);
     for (int i=0; i<dim; i++) {
-        p[i] = randRange((ull) 0, (ull) numeric_limits<ull>::max());
+        p[i] = randRange(0ULL, MAX_COORD);
     }
     return p;
 }
@@ -21,7 +23,7 @@ point rand_point(int dim) {
 point rand_shift(int dim) {
     point p(dim);
     for (int i=0; i<dim; i++) {
-        p[i] = randNormal((ull) 0, (ull) 1e5);
+        p[i] = randNormal(0ULL, CLUSTER_RADIUS);
     }
     return p;
 }
