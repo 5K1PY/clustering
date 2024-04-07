@@ -1,12 +1,13 @@
+#include "points.h"
+#include "random.h"
 #include "hashing.h"
+#include "r_p.h"
 
 int main(int argc, char const *argv[]) {
     int n, dim; cin >> n >> dim;
     auto points = load_points(n, dim);
-    GridHashing hashing_scheme(dim, (ull) 1e17);
-    for (int i=0; i<5; i++) {
-        hashing_scheme.hash(points[i]);
-        cout << points[i].hash << endl;
+    calc_rps(points);
+    for (auto p: points) {
+        cout << p.r_p << endl;
     }
-    return 0;
 }

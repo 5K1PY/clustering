@@ -1,3 +1,6 @@
+#pragma once
+
+#include <math.h>
 #include <vector>
 #include <iostream>
 
@@ -11,7 +14,7 @@ struct point {
         coords.resize(dimension);
     }
 
-    point operator+(point Y) {
+    point operator+(const point& Y) {
         point result(coords.size());
         for (int i=0; i<coords.size(); i++) {
             result.coords[i] = coords[i] + Y.coords[i];
@@ -22,10 +25,24 @@ struct point {
     ull& operator[](size_t idx) {
         return coords[idx];
     }
+
+    ull dist_squared(const point& Y) {
+        ull result = 0;
+        for (int i=0; i<coords.size(); i++) {
+            ull delta = coords[i] - Y.coords[i];
+            result += delta*delta;
+        }
+        return result;
+    }
+
+    double dist(const point& Y) {
+        return sqrt(dist_squared(Y));
+    }
 };
 
 struct tagged_point : point {
     ull hash;
+    double r_p;
 
     tagged_point(int dim) : point(dim) {}
 };
