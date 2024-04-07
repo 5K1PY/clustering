@@ -10,4 +10,9 @@ int main(int argc, char const *argv[]) {
     for (auto p: points) {
         cout << p.r_p << endl;
     }
+    auto chosen = mettu_plaxton(points);
+    for (auto c: chosen) {
+        cout << c << " ";
+    }
+    cout << endl;
 }
