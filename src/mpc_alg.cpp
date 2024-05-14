@@ -11,7 +11,7 @@ using namespace std;
 
 const int CELL_SIZE = 1e5;
 
-void mpc_alg(int dim, vector<tagged_point>& points, int r) {
+vector<int> mpc_alg(int dim, vector<tagged_point>& points, ull r) {
     GridHashing hashing_scheme(dim, CELL_SIZE);
 
     for (auto p: points) {
@@ -26,8 +26,9 @@ void mpc_alg(int dim, vector<tagged_point>& points, int r) {
     }
 
     // TODO: Fix this as this should use euclid distance and not maximal
+    vector<int> proximity_points;
     for (auto p: points) {
-        int proximity_points = bucket_size[p.hash];
+        proximity_points.push_back(bucket_size[p.hash]);
 
         point offset(dim);
         for (int i; i<dim; i++) {
@@ -37,7 +38,7 @@ void mpc_alg(int dim, vector<tagged_point>& points, int r) {
         while (true) {
             ull hash = hashing_scheme.hash(p + offset);
             if (bucket_size.find(hash) != bucket_size.end()) {
-                proximity_points += bucket_size[hash];
+                proximity_points.back() += bucket_size[hash];
             }
 
             int i = 0;
@@ -53,4 +54,5 @@ void mpc_alg(int dim, vector<tagged_point>& points, int r) {
             if (i == dim) break;
         }
     }
+    return proximity_points;
 }
