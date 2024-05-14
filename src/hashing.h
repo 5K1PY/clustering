@@ -29,16 +29,17 @@ class GridHashing {
         hash_poly = numeric_limits<ull>::max() / cell_size + 1;
         hash_mod = ull(1e9)+7;
     }
-    void hash(tagged_point& p) {
+    ull hash(const point& p) {
         vector<ull> cell(dimension);
         for (int i=0; i<dimension; i++) {
             cell[i] = (p.coords[i] + offsets[i]) / cell_size;
         }
-        p.hash = 0;
+        ull hash = 0;
         for (int i=0; i<dimension; i++) {
-            p.hash *= hash_poly;
-            p.hash += cell[i];
-            p.hash %= hash_mod;
+            hash *= hash_poly;
+            hash += cell[i];
+            hash %= hash_mod;
         }
+        return hash;
     }
 };
