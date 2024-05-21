@@ -23,6 +23,7 @@ class GridHashing {
 
         offsets.resize(dimension, 0);
         for (int i=0; i<dimension; i++) {
+            // TODO: We have now long longs so we shouldn't overflow
             offsets[i] = randRange((ull) 0, numeric_limits<ull>::max());
         }
 
