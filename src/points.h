@@ -3,11 +3,14 @@
 #include <math.h>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
 typedef unsigned long long ull;
 typedef long long ll;
+
+const ll scale = (ll) 1e16;
 
 struct point {
     vector<ll> coords;
@@ -41,6 +44,15 @@ struct point {
     }
 };
 
+std::ostream& operator<<(std::ostream& os, const point& p) {
+    string s = "";
+    for (auto c: p.coords) {
+        cout << s << double(c) / scale;
+        s = " ";
+    }
+    return cout << "\n";
+}
+
 struct tagged_point : point {
     ull hash;
     double r_p;
@@ -52,7 +64,9 @@ vector<tagged_point> load_points(int n, int dim) {
     vector<tagged_point> points(n, tagged_point(dim));
     for (int i=0; i<n; i++) {
         for (int j=0; j<dim; j++) {
-            cin >> points[i].coords[j];
+            double coord;
+            cin >> coord;
+            points[i].coords[j] = coord * scale;
         }
     }
     return points;
