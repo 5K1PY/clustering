@@ -15,7 +15,7 @@ const ll scale = (ll) 1e16;
 struct point {
     vector<ll> coords;
     point(int dimension) {
-        coords.resize(dimension);
+        coords.resize(dimension, 0);
     }
 
     point operator+(const point& Y) {

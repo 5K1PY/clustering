@@ -1,6 +1,8 @@
 #pragma once
 
-#include <map>
+#include <queue>
+#include <unordered_set>
+#include <unordered_map>
 
 #include "hashing.h"
 #include "points.h"
@@ -17,41 +19,38 @@ vector<int> mpc_alg(int dim, vector<tagged_point>& points, ull r) {
         p.hash = hashing_scheme.hash(p);
     }
 
-    map<ull, ull> bucket_size;
+    unordered_map<ull, ull> bucket_size;
     for (auto p: points) {
         if (bucket_size.find(p.hash) == bucket_size.end())
             bucket_size[p.hash] = 0;
         bucket_size[p.hash]++;
     }
 
-    // TODO: Fix this as this should use euclid distance and not maximal
-    vector<int> proximity_points;
-    for (auto p: points) {
-        proximity_points.push_back(bucket_size[p.hash]);
+    vector<int> proximity_points(points.size(), 0);
+    for (int points_i=0; points_i<points.size(); points_i++) {
+        queue<point> neighborhood;
+        // TODO: Start from all points where we round all coordinates to nearest cell hyperplane
+        // Because we can miss some cells without it
+        neighborhood.push(points[points_i]);
+        unordered_set<ull> found_cells;
 
-        point offset(dim);
-        for (int i; i<dim; i++) {
-            offset.coords[i] = -r;
-        }
+        while (neighborhood.size()) {
+            point p = neighborhood.back(); neighborhood.pop();
+            ull hash = hashing_scheme.hash(p);
 
-        while (true) {
-            ull hash = hashing_scheme.hash(p + offset);
-            if (bucket_size.find(hash) != bucket_size.end()) {
-                proximity_points.back() += bucket_size[hash];
+            if (found_cells.count(hash))
+                continue;
+
+            proximity_points[points_i] += bucket_size[hash];
+
+            for (int i=0; i<dim; i++) {
+                point q = p;
+                q[i] += CELL_SIZE;
+                if (points[i].dist_squared(q) <= r*r)
+                    neighborhood.push(q);
             }
-
-            int i = 0;
-            for (; i<dim; i++) {
-                if (offset.coords[i] > r) {
-                    offset.coords[i] = -r;
-                } else {
-                    offset.coords[i] += CELL_SIZE;
-                    break;
-                }
-            }
-
-            if (i == dim) break;
         }
     }
+
     return proximity_points;
 }
