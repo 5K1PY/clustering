@@ -2,12 +2,11 @@
 
 #include <map>
 
-typedef unsigned long long ull;
-using namespace std;
-
 #include "hashing.h"
 #include "points.h"
 #include "r_p.h"
+
+using namespace std;
 
 const int CELL_SIZE = 1e5;
 

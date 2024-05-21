@@ -7,9 +7,10 @@
 using namespace std;
 
 typedef unsigned long long ull;
+typedef long long ll;
 
 struct point {
-    vector<ull> coords;
+    vector<ll> coords;
     point(int dimension) {
         coords.resize(dimension);
     }
@@ -22,14 +23,14 @@ struct point {
         return result;
     }
 
-    ull& operator[](size_t idx) {
+    ll& operator[](size_t idx) {
         return coords[idx];
     }
 
     ull dist_squared(const point& Y) {
         ull result = 0;
         for (int i=0; i<coords.size(); i++) {
-            ull delta = coords[i] - Y.coords[i];
+            ll delta = coords[i] - Y.coords[i];
             result += delta*delta;
         }
         return result;

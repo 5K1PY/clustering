@@ -7,8 +7,6 @@
 
 using namespace std;
 
-typedef unsigned long long ull;
-
 constexpr ull MAX_COORD = 1e9;
 constexpr ull CLUSTER_RADIUS = 1e3;
 

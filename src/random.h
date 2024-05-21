@@ -4,7 +4,6 @@
 #include <limits>
 #include <type_traits>
 
-typedef unsigned long long ull;
 using namespace std;
 
 mt19937 rng(76901);
