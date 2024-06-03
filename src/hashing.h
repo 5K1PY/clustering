@@ -16,6 +16,10 @@ class GridHashing {
     ull cell_size;
     vector<ull> offsets;
     ull hash_poly, hash_mod;
+
+    ull inline normalize_coord(const point& p, int i) {
+        return (ull) p.coords[i] - numeric_limits<ll>::min() + offsets[i];
+    }
   public:
     GridHashing(int dim, ull cs) {
         cell_size = cs;
@@ -32,7 +36,7 @@ class GridHashing {
     ull hash(const point& p) {
         vector<ull> cell(dimension);
         for (int i=0; i<dimension; i++) {
-            cell[i] = ((ull) p.coords[i] - numeric_limits<ll>::min() + offsets[i]) / cell_size;
+            cell[i] = normalize_coord(p, i) / cell_size;
         }
         ull hash = 0;
         for (int i=0; i<dimension; i++) {
@@ -41,5 +45,16 @@ class GridHashing {
             hash %= hash_mod;
         }
         return hash;
+    }
+    bool bucket_sphere_intersect(const point& center, ull radius, point bucket) {
+        for (int i=0; i<dimension; i++) {
+            ull offset = normalize_coord(bucket, i) % cell_size;
+            if (bucket.coords[i] > center.coords[i]) {
+                bucket.coords[i] -= offset;
+            } else if (bucket.coords[i] < center.coords[i]) {
+                bucket.coords[i] += cell_size - offset - 1;
+            }
+        }
+        return center.dist_squared(bucket) <= radius*radius;
     }
 };

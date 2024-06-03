@@ -30,7 +30,7 @@ struct point {
         return coords[idx];
     }
 
-    ull dist_squared(const point& Y) {
+    ull dist_squared(const point& Y) const {
         ull result = 0;
         for (int i=0; i<coords.size(); i++) {
             ll delta = coords[i] - Y.coords[i];
@@ -39,7 +39,7 @@ struct point {
         return result;
     }
 
-    double dist(const point& Y) {
+    double dist(const point& Y) const {
         return sqrt(dist_squared(Y));
     }
 };

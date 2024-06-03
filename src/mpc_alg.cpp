@@ -29,8 +29,6 @@ vector<int> mpc_alg(int dim, vector<tagged_point>& points, ull r) {
     vector<int> proximity_points(points.size(), 0);
     for (int points_i=0; points_i<points.size(); points_i++) {
         queue<point> neighborhood;
-        // TODO: Start from all points where we round all coordinates to nearest cell hyperplane
-        // Because we can miss some cells without it
         neighborhood.push(points[points_i]);
         unordered_set<ull> found_cells;
 
@@ -46,7 +44,7 @@ vector<int> mpc_alg(int dim, vector<tagged_point>& points, ull r) {
             for (int i=0; i<dim; i++) {
                 point q = p;
                 q[i] += CELL_SIZE;
-                if (points[i].dist_squared(q) <= r*r)
+                if (hashing_scheme.bucket_sphere_intersect(points[i], r, q))
                     neighborhood.push(q);
             }
         }
