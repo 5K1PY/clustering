@@ -23,7 +23,6 @@ class GridHashing {
 
         offsets.resize(dimension, 0);
         for (int i=0; i<dimension; i++) {
-            // TODO: We have now long longs so we shouldn't overflow
             offsets[i] = randRange((ull) 0, numeric_limits<ull>::max());
         }
 
@@ -33,7 +32,7 @@ class GridHashing {
     ull hash(const point& p) {
         vector<ull> cell(dimension);
         for (int i=0; i<dimension; i++) {
-            cell[i] = (p.coords[i] + offsets[i]) / cell_size;
+            cell[i] = ((ull) p.coords[i] - numeric_limits<ll>::min() + offsets[i]) / cell_size;
         }
         ull hash = 0;
         for (int i=0; i<dimension; i++) {
