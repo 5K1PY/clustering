@@ -3,6 +3,7 @@
 #include <queue>
 #include <unordered_set>
 #include <unordered_map>
+#include <optional>
 
 #include "hashing.h"
 #include "points.h"
@@ -13,13 +14,13 @@ using namespace std;
 template<typename T>
 struct Composable {
     T empty_value;
-    virtual T evaluate(const point& p) = 0;
+    virtual T evaluate(const tagged_point& p) = 0;
     virtual T compose(T val1, T val2) = 0;
 };
 
 struct Size : Composable<int> {
     int empty_value = 0;
-    virtual int evaluate(const point& p) {
+    virtual int evaluate(const tagged_point& p) {
         return 1;
     }
     virtual int compose(int val1, int val2) {
@@ -27,10 +28,22 @@ struct Size : Composable<int> {
     }
 };
 
+struct MinLabel : Composable<const tagged_point*> {
+    const tagged_point* empty_value = NULL;
+    virtual const tagged_point* evaluate(const tagged_point& p) {
+        return &p;
+    }
+    virtual const tagged_point* compose(const tagged_point* val1, const tagged_point* val2) {
+        if (val1 == NULL) return val2;
+        if (val2 == NULL) return val1;
+        return (val1->label <= val2->label) ? val1 : val2;
+    }
+};
+
 const int CELL_SIZE = 1e5;
 
 template<typename T>
-vector<T> eval_composable(int dim, vector<tagged_point>& points, ull r, Composable<T> f) {
+vector<T> eval_composable(int dim, const vector<tagged_point>& points, ull r, Composable<T> f) {
     GridHashing hashing_scheme(dim, CELL_SIZE);
 
     for (auto p: points) {

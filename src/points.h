@@ -56,6 +56,7 @@ std::ostream& operator<<(std::ostream& os, const point& p) {
 struct tagged_point : point {
     ull hash;
     double r_p;
+    ull label;
 
     tagged_point(int dim) : point(dim) {}
 };
