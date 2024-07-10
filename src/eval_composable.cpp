@@ -10,23 +10,41 @@
 
 using namespace std;
 
+template<typename T>
+struct Composable {
+    T empty_value;
+    virtual T evaluate(const point& p) = 0;
+    virtual T compose(T val1, T val2) = 0;
+};
+
+struct Size : Composable<int> {
+    int empty_value = 0;
+    virtual int evaluate(const point& p) {
+        return 1;
+    }
+    virtual int compose(int val1, int val2) {
+        return val1 + val2;
+    }
+};
+
 const int CELL_SIZE = 1e5;
 
-vector<int> mpc_alg(int dim, vector<tagged_point>& points, ull r) {
+template<typename T>
+vector<T> eval_composable(int dim, vector<tagged_point>& points, ull r, Composable<T> f) {
     GridHashing hashing_scheme(dim, CELL_SIZE);
 
     for (auto p: points) {
         p.hash = hashing_scheme.hash(p);
     }
 
-    unordered_map<ull, ull> bucket_size;
+    unordered_map<ull, T> bucket_f;
     for (auto p: points) {
-        if (bucket_size.find(p.hash) == bucket_size.end())
-            bucket_size[p.hash] = 0;
-        bucket_size[p.hash]++;
+        if (bucket_f.find(p.hash) == bucket_f.end())
+            bucket_f[p.hash] = f.empty_value;
+        bucket_f[p.hash] = f.compose(bucket_f[p.hash], f.evaluate(p));
     }
 
-    vector<int> proximity_points(points.size(), 0);
+    vector<T> proximity_points(points.size(), f.empty_value);
     for (int points_i=0; points_i<points.size(); points_i++) {
         queue<point> neighborhood;
         neighborhood.push(points[points_i]);
@@ -39,7 +57,10 @@ vector<int> mpc_alg(int dim, vector<tagged_point>& points, ull r) {
             if (found_cells.count(hash))
                 continue;
 
-            proximity_points[points_i] += bucket_size[hash];
+            proximity_points[points_i] = f.compose(
+                proximity_points[points_i],
+                bucket_f[hash]
+            );
 
             for (int i=0; i<dim; i++) {
                 point q = p;
