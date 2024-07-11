@@ -1,0 +1,4 @@
+- Guess r_p approximates using powers of 2
+- Compute facilities
+- Compute solution cost
+- Parallelization
