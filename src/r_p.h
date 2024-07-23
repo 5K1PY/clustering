@@ -27,6 +27,7 @@ double calc_rp(vector<tagged_point>& points, int from) {
 
     int l = 0;
     int r = copied_points.size();
+    // TODO: Use bin_search for this
     while (l + 1 < r) {
         int mid = (l+r)/2;
         double rp_mid = calc_rp_first_k(copied_points, points[from], mid+1);
