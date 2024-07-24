@@ -52,9 +52,10 @@ const int CELL_SIZE = 1e5;
 
 template<typename T>
 vector<T> eval_composable(int dim, const vector<tagged_point>& points, ull r, Composable::Composable<T>& f) {
+    // TODO: Scale adjustments
+    // TODO: Cell size depending on r
     GridHashing hashing_scheme(dim, CELL_SIZE);
 
-    // TODO: Move this somewhere else
     for (auto p: points) {
         p.hash = hashing_scheme.hash(p);
     }

@@ -1,4 +1,8 @@
-- Guess r_p approximates using powers of 2
-- Compute facilities
-- Compute solution cost
+- Solve TODOs
+- Test, test, test
+- Better control
+- Add README and how to use
+- Test how fast is eval_composable if not virtual
+- Experiment with parameters
+- Better hashing function
 - Parallelization
