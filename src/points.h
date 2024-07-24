@@ -31,9 +31,9 @@ struct point {
     }
 
     ull dist_squared(const point& Y) const {
-        ull result = 0;
+        double result = 0;
         for (int i=0; i<coords.size(); i++) {
-            ll delta = coords[i] - Y.coords[i];
+            double delta = coords[i] / scale - Y.coords[i] / scale;
             result += delta*delta;
         }
         return result;
@@ -54,9 +54,9 @@ std::ostream& operator<<(std::ostream& os, const point& p) {
 }
 
 struct tagged_point : point {
-    ull hash;
-    double r_p;
-    ull label;
+    ull hash = 0;
+    double r_p = 0.0;
+    ull label = 0;
 
     tagged_point(int dim) : point(dim) {}
 };
