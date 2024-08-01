@@ -21,7 +21,7 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points) {
     vector<int> r_approx(points.size(), 0);
     vector<const tagged_point*> min_labels(points.size(), NULL);
     
-    int r_guess = 1;
+    ull r_guess = 1;
     while (find(r_approx.begin(), r_approx.end(), 0) != r_approx.end()) {
         vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size);
         vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel);

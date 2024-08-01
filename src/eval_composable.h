@@ -48,12 +48,10 @@ namespace Composable {
     __MinLabel MinLabel = __MinLabel();
 }
 
-const int CELL_SIZE = 1e5;
 
 template<typename T>
 vector<T> eval_composable(int dim, const vector<tagged_point>& points, ull r, Composable::Composable<T>& f) {
-    // TODO: Scale adjustments
-    // TODO: Cell size depending on r
+    const ull CELL_SIZE = 2.0 * GridHashing::Gamma * r;
     GridHashing hashing_scheme(dim, CELL_SIZE);
 
     for (auto p: points) {
