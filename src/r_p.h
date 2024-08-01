@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "points.h"
+#include "bin_search.h"
 
 using namespace std;
 
@@ -25,19 +26,15 @@ double calc_rp(vector<tagged_point>& points, int from) {
         }
     );
 
-    int l = 0;
-    int r = copied_points.size();
-    // TODO: Use bin_search for this
-    while (l + 1 < r) {
-        int mid = (l+r)/2;
-        double rp_mid = calc_rp_first_k(copied_points, points[from], mid+1);
-        if (rp_mid < points[from].dist(copied_points[mid])) {
-            r = mid;
-        } else {
-            l = mid;
-        }
-    }
-    return calc_rp_first_k(copied_points, points[from], l+1);
+    int included = binary_search<int>(
+        [&copied_points, &points, &from](int mid) {
+            double rp_mid = calc_rp_first_k(copied_points, points[from], mid+1);
+            return rp_mid < points[from].dist(copied_points[mid]);
+        },
+        0, copied_points.size()
+    );
+
+    return calc_rp_first_k(copied_points, points[from], included);
 }
 
 void calc_rps(vector<tagged_point>& points) {
