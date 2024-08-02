@@ -61,11 +61,12 @@ vector<point> gen_clusters(int n, int dim) {
 
 int main() {
     int dimension, n;
-    cin >> n >> dimension;
+    double facility_cost;
+    cin >> n >> dimension >> facility_cost;
 
     vector<point> points = gen_clusters(n, dimension);
 
-    cout << n << " " << dimension << "\n";
+    cout << n << " " << dimension << " " << facility_cost << "\n";
     for (auto p: points) {
         for (int i=0; i<dimension; i++) {
             cout << p[i] << (i+1 < dimension ? " " : "\n");

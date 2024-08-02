@@ -5,10 +5,11 @@ int main(int argc, char const *argv[]) {
     if (argc >= 2) {
         seed(strtoull(argv[1], 0, 16));
     }
-
-    int n, dim; cin >> n >> dim;
+    int n, dim; double facility_cost;
+    cin >> n >> dim >> facility_cost;
     auto points = load_points(n, dim);
-    auto chosen = compute_facilities(dim, points);
+
+    auto chosen = compute_facilities(dim, points, facility_cost);
     for (auto c: chosen) {
         cout << c << " ";
     }

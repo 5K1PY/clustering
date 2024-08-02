@@ -9,15 +9,15 @@
 
 using namespace std;
 
-double calc_rp_first_k(vector<tagged_point>& points, tagged_point from, int k) {
-    double rp = 1.0;
+double calc_rp_first_k(vector<tagged_point>& points, tagged_point from, int k, double facility_cost) {
+    double rp = facility_cost;
     for (int i=0; i<k; i++) {
         rp += from.dist(points[i]);
     }
     return rp / k;
 }
 
-double calc_rp(vector<tagged_point>& points, int from) {
+double calc_rp(vector<tagged_point>& points, int from, double facility_cost) {
     vector<tagged_point> copied_points(points);
     sort(
         copied_points.begin(), copied_points.end(),
@@ -27,19 +27,19 @@ double calc_rp(vector<tagged_point>& points, int from) {
     );
 
     int included = binary_search<int>(
-        [&copied_points, &points, &from](int mid) {
-            double rp_mid = calc_rp_first_k(copied_points, points[from], mid+1);
+        [&copied_points, &points, &from, &facility_cost](int mid) {
+            double rp_mid = calc_rp_first_k(copied_points, points[from], mid+1, facility_cost);
             return rp_mid < points[from].dist(copied_points[mid]);
         },
         0, copied_points.size()
     );
 
-    return calc_rp_first_k(copied_points, points[from], included);
+    return calc_rp_first_k(copied_points, points[from], included, facility_cost);
 }
 
-void calc_rps(vector<tagged_point>& points) {
+void calc_rps(vector<tagged_point>& points, double facility_cost) {
     for (int i=0; i<points.size(); i++) {
-        points[i].r_p = calc_rp(points, i);
+        points[i].r_p = calc_rp(points, i, facility_cost);
     }
 }
 

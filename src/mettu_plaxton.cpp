@@ -4,9 +4,11 @@
 #include "r_p.h"
 
 int main(int argc, char const *argv[]) {
-    int n, dim; cin >> n >> dim;
+    int n, dim; double facility_cost;
+    cin >> n >> dim >> facility_cost;
     auto points = load_points(n, dim);
-    calc_rps(points);
+
+    calc_rps(points, facility_cost);
     for (auto p: points) {
         cout << p.r_p << endl;
     }

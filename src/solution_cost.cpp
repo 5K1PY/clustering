@@ -5,11 +5,10 @@
 
 using namespace std;
 
-double f_param = 1.0;
-
 int main(int argc, char const *argv[]) {
     ifstream solution("solution.txt");
-    int n, dim; cin >> n >> dim;
+    int n, dim; double facility_cost;
+    cin >> n >> dim >> facility_cost;
     auto points = load_points(n, dim);
 
     int x = 0;
@@ -18,7 +17,7 @@ int main(int argc, char const *argv[]) {
         facilities.push_back(x);
     }
 
-    double cost = facilities.size() * f_param;
+    double cost = facilities.size() * facility_cost;
     for (auto point: points) {
         double min_dist = numeric_limits<double>::infinity();
         for (auto facility_i: facilities) {

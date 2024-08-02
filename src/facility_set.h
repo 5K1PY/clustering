@@ -10,10 +10,9 @@
 typedef unsigned long long ull;
 
 const float tau_param = 1.0;
-const float f_param = 1.0;
 const float beta_param = 1.0;
 
-vector<int> compute_facilities(int dim, vector<tagged_point> points) {
+vector<int> compute_facilities(int dim, vector<tagged_point> points, double facility_cost) {
     for (auto &p: points) {
         p.label = randRange(0ULL, numeric_limits<ull>::max());
     }
@@ -26,7 +25,7 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points) {
         vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size);
         vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel);
         for (int i=0; i<points.size(); i++) {
-            if (r_approx[i] == 0 && approx_ball_sizes[i] >= f_param / (2 * beta_param * r_guess)) {
+            if (r_approx[i] == 0 && approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
                 r_approx[i] = r_guess;
                 min_labels[i] = guess_min_labels[i];
             }
@@ -36,7 +35,7 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points) {
 
     vector<int> results;
     for (int i=0; i<points.size(); i++) {
-        if (&points[i] == min_labels[i] || randBool(tau_param * r_approx[i] / f_param))
+        if (&points[i] == min_labels[i] || randBool(tau_param * r_approx[i] / facility_cost))
             results.push_back(i);
     }
     return results;
