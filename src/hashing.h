@@ -47,7 +47,7 @@ class GridHashing {
         }
         return hash;
     }
-    bool bucket_sphere_intersect(const point& center, ull radius, point bucket) {
+    bool bucket_sphere_intersect(const point& center, double radius, point bucket) {
         for (int i=0; i<dimension; i++) {
             ull offset = normalize_coord(bucket, i) % cell_size;
             if (bucket.coords[i] > center.coords[i]) {
@@ -56,7 +56,7 @@ class GridHashing {
                 bucket.coords[i] += cell_size - offset - 1;
             }
         }
-        return center.dist_squared(bucket) <= radius*radius;
+        return center.dist_squared(bucket) <= radius * radius;
     }
 };
 

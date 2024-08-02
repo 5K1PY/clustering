@@ -50,16 +50,16 @@ namespace Composable {
 
 
 template<typename T>
-vector<T> eval_composable(int dim, const vector<tagged_point>& points, ull r, Composable::Composable<T>& f) {
-    const ull CELL_SIZE = 2.0 * GridHashing::Gamma * r;
+vector<T> eval_composable(int dim, vector<tagged_point>& points, double r, Composable::Composable<T>& f) {
+    const ull CELL_SIZE = 2.0 * GridHashing::Gamma * r * scale;
     GridHashing hashing_scheme(dim, CELL_SIZE);
 
-    for (auto p: points) {
+    for (tagged_point &p: points) {
         p.hash = hashing_scheme.hash(p);
     }
 
     unordered_map<ull, T> bucket_f;
-    for (auto p: points) {
+    for (tagged_point &p: points) {
         if (bucket_f.find(p.hash) == bucket_f.end())
             bucket_f[p.hash] = f.empty_value;
         bucket_f[p.hash] = f.compose(bucket_f[p.hash], f.evaluate(p));
@@ -72,21 +72,25 @@ vector<T> eval_composable(int dim, const vector<tagged_point>& points, ull r, Co
         unordered_set<ull> found_cells;
 
         while (neighborhood.size()) {
-            point p = neighborhood.back(); neighborhood.pop();
+            point p = neighborhood.front(); neighborhood.pop();
             ull hash = hashing_scheme.hash(p);
 
-            if (found_cells.count(hash))
+            if (found_cells.count(hash) > 0)
                 continue;
+            found_cells.insert(hash);
 
             proximity_points[points_i] = f.compose(
                 proximity_points[points_i],
                 bucket_f[hash]
             );
 
-            for (int i=0; i<dim; i++) {
+            for (int ix=0; ix<2*dim; ix++) {
+                int i = ix / 2;
+                ll direction = 2*(ix % 2) - 1;
+
                 point q = p;
-                q[i] += CELL_SIZE;
-                if (hashing_scheme.bucket_sphere_intersect(points[i], r, q))
+                q[i] += direction*CELL_SIZE;
+                if (hashing_scheme.bucket_sphere_intersect(points[points_i], r, q))
                     neighborhood.push(q);
             }
         }
