@@ -10,7 +10,7 @@
 typedef unsigned long long ull;
 
 const float tau_param = 1.0;
-const float f_param = 2.0;
+const float f_param = 1.0;
 const float beta_param = 1.0;
 
 vector<int> compute_facilities(int dim, vector<tagged_point> points) {

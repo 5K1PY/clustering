@@ -8,6 +8,10 @@ using namespace std;
 
 mt19937 rng(76901);
 
+void seed(int seed) {
+    rng = mt19937(seed);
+}
+
 template<typename T> T randRange(T min, T max) {
     /**
      * @brief Generates random integer from [min, max] inclusive
