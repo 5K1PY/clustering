@@ -7,7 +7,7 @@
 
 using namespace std;
 
-constexpr ull MAX_COORD = 1e9;
+constexpr ull MAX_COORD = 1e17;
 constexpr ull CLUSTER_RADIUS = 1e3;
 
 point rand_point(int dim) {
@@ -69,7 +69,7 @@ int main() {
     cout << n << " " << dimension << " " << facility_cost << "\n";
     for (auto p: points) {
         for (int i=0; i<dimension; i++) {
-            cout << p[i] << (i+1 < dimension ? " " : "\n");
+            cout << ((double) p[i] / scale) << (i+1 < dimension ? " " : "\n");
         }
     }
 }
