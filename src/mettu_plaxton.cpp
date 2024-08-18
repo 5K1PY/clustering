@@ -9,9 +9,7 @@ int main(int argc, char const *argv[]) {
     auto points = load_points(n, dim);
 
     calc_rps(points, facility_cost);
-    for (auto p: points) {
-        cout << p.r_p << endl;
-    }
+
     auto chosen = mettu_plaxton(points);
     for (auto c: chosen) {
         cout << c << " ";

@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-    ifstream solution("solution.txt");
+    ifstream solution(getenv("SOLUTION"));
     int n, dim; double facility_cost;
     cin >> n >> dim >> facility_cost;
     auto points = load_points(n, dim);
