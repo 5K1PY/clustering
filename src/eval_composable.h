@@ -66,7 +66,7 @@ vector<T> eval_composable(int dim, vector<tagged_point>& points, double r, Compo
     }
 
     vector<T> proximity_points(points.size(), f.empty_value);
-    for (int points_i=0; points_i<points.size(); points_i++) {
+    for (int points_i=0; points_i<(int) points.size(); points_i++) {
         queue<point> neighborhood;
         neighborhood.push(points[points_i]);
         unordered_set<ull> found_cells;

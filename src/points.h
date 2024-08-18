@@ -20,7 +20,7 @@ struct point {
 
     point operator+(const point& Y) {
         point result(coords.size());
-        for (int i=0; i<coords.size(); i++) {
+        for (int i=0; i<(int) coords.size(); i++) {
             result.coords[i] = coords[i] + Y.coords[i];
         }
         return result;
@@ -32,7 +32,7 @@ struct point {
 
     double dist_squared(const point& Y) const {
         double result = 0;
-        for (int i=0; i<coords.size(); i++) {
+        for (int i=0; i<(int) coords.size(); i++) {
             double delta = (double) coords[i] / scale - (double) Y.coords[i] / scale;
             result += delta*delta;
         }

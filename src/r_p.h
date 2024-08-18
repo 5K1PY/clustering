@@ -38,14 +38,14 @@ double calc_rp(vector<tagged_point>& points, int from, double facility_cost) {
 }
 
 void calc_rps(vector<tagged_point>& points, double facility_cost) {
-    for (int i=0; i<points.size(); i++) {
+    for (int i=0; i<(int) points.size(); i++) {
         points[i].r_p = calc_rp(points, i, facility_cost);
     }
 }
 
 vector<int> mettu_plaxton(vector<tagged_point>& original_points) {
     vector<pair<int, tagged_point*>> points(original_points.size());
-    for (int i=0; i<original_points.size(); i++) {
+    for (int i=0; i<(int) original_points.size(); i++) {
         points[i] = {i, &original_points[i]};
     }
 

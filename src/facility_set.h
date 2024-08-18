@@ -24,7 +24,7 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points, double faci
     while (find(r_approx.begin(), r_approx.end(), 0) != r_approx.end()) {
         vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size);
         vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel);
-        for (int i=0; i<points.size(); i++) {
+        for (int i=0; i<(int) points.size(); i++) {
             if (r_approx[i] == 0 && approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
                 r_approx[i] = r_guess;
                 min_labels[i] = guess_min_labels[i];
@@ -34,7 +34,7 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points, double faci
     }
 
     vector<int> results;
-    for (int i=0; i<points.size(); i++) {
+    for (int i=0; i<(int) points.size(); i++) {
         if (&points[i] == min_labels[i] || randBool(tau_param * r_approx[i] / facility_cost))
             results.push_back(i);
     }
