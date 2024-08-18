@@ -14,7 +14,7 @@ all: $(TARGETS)
 
 $(BUILD_DIR)/%: $(SRC_DIR)/%.cpp $(HEADERS)
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $<
 
 
 clean:
