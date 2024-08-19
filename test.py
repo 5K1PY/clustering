@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 from subprocess import Popen, PIPE
+import time
 
 BUILD_DIR = "build"
 DATA_DIR = "data"
@@ -36,15 +37,18 @@ def gen(size, dimension, cost) -> str:
 
 def solve(input_path, solution, args) -> str:
     output_path = input_path.removesuffix(".in") + f".{solution}.out"
+    start_time = time.time()
     process = Popen(
         [os.path.join(BUILD_DIR, solution), *args],
         stdin=open(input_path),
         stdout=open(output_path, "w")
     )
     rc = process.wait()
+    total_time = time.time() - start_time
+
     assert rc == 0
 
-    return output_path
+    return output_path, total_time
 
 
 def judge(input_path: str, output_path: str) -> float:
@@ -54,7 +58,7 @@ def judge(input_path: str, output_path: str) -> float:
         stdout=PIPE,
         env={"SOLUTION" : output_path}
     )
-    return process.communicate()[0].decode().strip()
+    return float(process.communicate()[0].decode().strip())
 
 
 
@@ -63,7 +67,7 @@ for size in SIZES:
     for dimension in DIMENSIONS:
         inp = gen(size, dimension, COST)
         for solution, args in zip(SOLUTIONS, SOLUTION_ARGS, strict=True):
-            print(f"{inp:<20} {solution:15}", end=" ", flush=True)
-            out = solve(inp, solution, args)
-            print(judge(inp, out))
+            print(f"{inp:20} {solution:15}", end=" ", flush=True)
+            out, sol_time = solve(inp, solution, args)
+            print(f"{judge(inp, out):.4f}   {sol_time:.2f}s")
         print("-"*50)
