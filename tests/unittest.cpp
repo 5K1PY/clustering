@@ -1,5 +1,6 @@
-#include "points_unittests.h"
 #include "bin_search_unittests.h"
+#include "hashing_unittests.h"
+#include "points_unittests.h"
 
 #include "gtest/gtest.h"
 
