@@ -18,6 +18,13 @@ struct point {
         coords.resize(dimension, 0);
     }
 
+    point(vector<double> coordinates) {
+        coords.resize(coordinates.size());
+        for (int i=0; i<coordinates.size(); i++) {
+            coords[i] = coordinates[i] * scale;
+        }
+    }
+
     point operator+(const point& Y) {
         point result(coords.size());
         for (int i=0; i<(int) coords.size(); i++) {
