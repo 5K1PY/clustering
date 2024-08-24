@@ -20,12 +20,20 @@ struct point {
 
     point(vector<double> coordinates) {
         coords.resize(coordinates.size());
-        for (int i=0; i<coordinates.size(); i++) {
+        for (int i=0; i<(int) coordinates.size(); i++) {
             coords[i] = coordinates[i] * scale;
         }
     }
 
-    point operator+(const point& Y) {
+    bool operator==(const point& p) const {
+        return coords == p.coords;
+    }
+
+    bool operator!=(const point& p) const {
+        return coords != p.coords;
+    }
+
+    point operator+(const point& Y) const {
         point result(coords.size());
         for (int i=0; i<(int) coords.size(); i++) {
             result.coords[i] = coords[i] + Y.coords[i];
