@@ -14,7 +14,7 @@ TARGETS = $(patsubst %,$(BUILD_DIR)/%,$(TARGET_NAMES))
 
 all: $(TARGETS)
 
-$(BUILD_DIR)/unittest: $(TESTS_DIR)/unittest.cpp $(TESTS)
+$(BUILD_DIR)/unittest: $(TESTS_DIR)/unittest.cpp $(TESTS) $(HEADERS)
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -o $@ $< -lgtest -lpthread
 

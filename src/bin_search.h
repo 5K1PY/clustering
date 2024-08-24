@@ -6,6 +6,7 @@ using namespace std;
     
 template<typename T>
 T binary_search(const function<bool(T)>& predicate, T lower, T upper) {
+    lower--;
     while (lower + 1 < upper) {
         T mid = (lower + upper) / 2;
         if (predicate(mid)) {
