@@ -28,7 +28,7 @@ $$q_i = \begin{cases}
 \end{cases}$$
 
 4. Use polynomial rolling hash to convert $q$ to `ull`:
-$$h(q) := \sum_{i=0}^{d-1} q_i a^d \mod m$$
+$$h(q) := \left(\sum_{i=1}^{d} \frac{2q_i}{\ell} a^{d-i} \right)\bmod m$$
 
 ```c++
 typedef ull unsigned long long;
