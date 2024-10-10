@@ -17,7 +17,7 @@ For hashing point $p$:
 
 1. For given point $p$, find how many coordinates $p_i$ holds $(j-1)\varepsilon \leq \delta_i < j\cdot\varepsilon$ for each $j$.
 
-2. Now find biggest $x$ for which there are $x$ coordinates with $\delta_i < x \cdot \varepsilon$. Then $x$ is the dimension of the corresponding face bucket.
+2. Now find biggest $x$ for which there are $x$ coordinates with $\delta_i < x \cdot \varepsilon$. Then $d - x$ is the dimension of the corresponding face bucket.
 
 3. Let $q = b(p)$ be a point representing bucket $p$ belongs to:
 
@@ -50,21 +50,21 @@ ull FaceHash(vector<float> point) {
     }
 
     // find face dimension
-    int face_dim = -1;
+    int mul = -1;
     int points_within = 0;
     for (int x=0; x<d; d++) {
         points_within += epsilon_multiply[x];
         if (points_within >= x)
-            face_dim = x;
+            mul = x;
     }
 
     // normalize point
     for (int i=0; i<d; i++) {
         float alpha = point[i] % l;
-        
-        if (alpha < x*eps)
+
+        if (alpha < mul*eps)
             point[i] -= alpha;
-        else if (alpha > l - x*eps)
+        else if (alpha > l - mul*eps)
             point[i] += l - alpha;
         else
             point[i] += l/2.0 - alpha;
