@@ -21,7 +21,7 @@ class GridHashing {
         return (ull) p.coords[i] - numeric_limits<ll>::min() + _offsets[i];
     }
   public:
-    static const double Gamma;
+    static double const Gamma(int dimension) { return sqrt(dimension); }
 
     int const dimension() const { return _dimension; }
     ull const cell_size() const { return _cell_size; }
@@ -74,4 +74,3 @@ class GridHashing {
     }
 };
 
-const double GridHashing::Gamma = sqrt(2.0);

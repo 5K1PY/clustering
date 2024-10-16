@@ -51,7 +51,7 @@ namespace Composable {
 
 template<typename T>
 vector<T> eval_composable(int dim, vector<tagged_point>& points, double r, Composable::Composable<T>& f) {
-    const ull CELL_SIZE = 2.0 * GridHashing::Gamma * r * scale;
+    const ull CELL_SIZE = 2.0 * GridHashing::Gamma(dim) * r * scale;
     GridHashing hashing_scheme(dim, CELL_SIZE);
 
     for (tagged_point &p: points) {
