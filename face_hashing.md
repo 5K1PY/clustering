@@ -13,7 +13,7 @@ For hashing point $p$:
 - $\alpha_i := p_i \bmod \ell$ — coordinate distance to lowest hypercube point
 - $\delta_i := \min(\alpha_i, \ell - \alpha_i)$ — distance to nearest hypercube face
 
-### The algorithm
+### Hashing
 
 1. For given point $p$, find how many coordinates $p_i$ holds $(j-1)\varepsilon \leq \delta_i < j\cdot\varepsilon$ for each $j$.
 
@@ -80,3 +80,17 @@ ull FaceHash(vector<float> point) {
     return hash;
 }
 ```
+
+### Finding buckets within distance
+
+Given point $p$ we want to find nearby buckets within distance at most $\frac{\varepsilon}{2}$.
+First we notice that a ball of diameter $\varepsilon$ can intersect at most one bucket
+corresponding to dimension $d$.
+
+Therefore we iterate over each $d$ and try to construct a point $p'$ in the closest bucket.
+Afterwards, we check if $|p - p'| \leq \frac{\varepsilon}{2}$, and if so we add the bucket to result.
+
+For constructing point $p'$:
+1. We sort all coordinates by $\delta_i$ ascending.
+2. For the first $d$ coordinates, if $\delta_i \geq x \cdot \varepsilon$ we decrease them until inequality flips.
+3. For the rest, we increase $\delta_i$ to $x \cdot \varepsilon$ if they are less than that.
