@@ -4,6 +4,7 @@
 
 #include "random.h"
 #include "points.h"
+#include "composable.h"
 #include "eval_composable.h"
 #include "bin_search.h"
 
