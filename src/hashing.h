@@ -6,9 +6,11 @@
 
 #include "points.h"
 #include "random.h"
+#include "composable.h"
 
 using namespace std;
 
+template<typename T>
 class GridHashing {
   private:
     int _dimension;
@@ -71,6 +73,44 @@ class GridHashing {
             }
         }
         return center.dist_squared(bucket) <= radius * radius;
+    }
+
+    T eval_ball(
+        const tagged_point& center,
+        double radius,
+        const Composable::Composable<T>& f,
+        const unordered_map<ull, T>& bucket_values
+    ) const {
+        T result = f.empty_value;
+
+        queue<point> neighborhood;
+        neighborhood.push(center);
+        unordered_set<ull> found_cells;
+
+        while (neighborhood.size()) {
+            point p = neighborhood.front(); neighborhood.pop();
+            ull hash_of_p = hash(p);
+
+            if (found_cells.count(hash_of_p) > 0)
+                continue;
+            found_cells.insert(hash_of_p);
+
+            auto bucket_val = bucket_values.find(hash_of_p);
+            if (bucket_val != bucket_values.end()) {
+                result = f.compose(result, bucket_val->second);
+            }
+
+            for (int ix=0; ix<2*_dimension; ix++) {
+                int i = ix / 2;
+                ll direction = 2*(ix % 2) - 1;
+
+                point q = p;
+                q[i] += direction*_cell_size;
+                if (bucket_sphere_intersect(center, radius, q))
+                    neighborhood.push(q);
+            }
+        }
+        return result;
     }
 };
 
