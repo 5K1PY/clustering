@@ -11,7 +11,19 @@
 using namespace std;
 
 template<typename T>
-class GridHashing {
+class Hashing {
+  public:
+    virtual ull hash(const point& p) const = 0;
+    virtual T eval_ball(
+        const tagged_point& center,
+        double radius,
+        const Composable::Composable<T>& f,
+        const unordered_map<ull, T>& bucket_values
+    ) const = 0;
+};
+
+template<typename T>
+class GridHashing : Hashing<T> {
   private:
     int _dimension;
 
@@ -49,7 +61,7 @@ class GridHashing {
         _hash_poly = numeric_limits<ull>::max() / _cell_size + 1;
     }
 
-    ull hash(const point& p) const {
+    ull hash(const point& p) const override {
         vector<ull> cell(_dimension);
         for (int i=0; i<_dimension; i++) {
             cell[i] = normalize_coord(p, i) / _cell_size;
@@ -80,7 +92,7 @@ class GridHashing {
         double radius,
         const Composable::Composable<T>& f,
         const unordered_map<ull, T>& bucket_values
-    ) const {
+    ) const override {
         T result = f.empty_value;
 
         queue<point> neighborhood;
