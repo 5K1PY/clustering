@@ -130,3 +130,32 @@ class GridHashing : Hashing<T> {
     }
 };
 
+template<typename T>
+class FaceHashing : Hashing<T> {
+  private:
+    int _dimension;
+
+    ull _hypercube_side;
+    ull _epsilon;
+    ull _hash_poly, _hash_mod = ull(1e9)+7;
+  public:
+    static double GammaMul(int dimension) { return 4.0; } // > 1 / dimension + 2
+    static double Gamma(int dimension) { return dimension * sqrt(dimension); }
+
+    int const dimension() const { return _dimension; }
+    ull const hypercube_side() const { return _hypercube_side; }
+    ull const hash_poly() const { return _hash_poly; }
+    ull const hash_mod() const { return _hash_mod; }
+
+    FaceHashing(int dim, ull radius) {
+        _dimension = dim;
+        _hypercube_side = 2.0 * Gamma(dim) / sqrt(dim) * radius;
+        _epsilon = 2*radius
+
+        _hash_poly = numeric_limits<ull>::max() / _cell_size + 1;
+    }
+
+    ull hash(const point& p) const override {
+        // TODO: Don't forget to normalize point's ll to ull
+    }
+};
