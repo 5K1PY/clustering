@@ -13,6 +13,8 @@ using namespace std;
 template<typename T>
 class Hashing {
   public:
+    virtual ~Hashing() = default;
+
     virtual ull hash(const point& p) const = 0;
     virtual T eval_ball(
         const tagged_point& center,

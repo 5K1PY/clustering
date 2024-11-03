@@ -13,7 +13,7 @@ namespace Composable {
     template<typename T>
     struct Composable {
         Composable() {}
-        ~Composable() = default;
+        virtual ~Composable() = default;
 
         T empty_value;
         virtual T evaluate(const tagged_point& p) const = 0;
