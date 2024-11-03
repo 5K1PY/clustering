@@ -35,30 +35,32 @@ class GridHashing : Hashing<T> {
         return (ull) p.coords[i] - numeric_limits<ll>::min() + _offsets[i];
     }
   public:
-    static double const Gamma(int dimension) { return sqrt(dimension); }
+    static double Gamma(int dimension) { return sqrt(dimension); }
 
     int const dimension() const { return _dimension; }
     ull const cell_size() const { return _cell_size; }
     ull const hash_poly() const { return _hash_poly; }
     ull const hash_mod() const { return _hash_mod; }
 
-    GridHashing(int dim, ull cs) {
-        _cell_size = cs;
+    GridHashing(int dim, ull radius) {
         _dimension = dim;
+        _cell_size = 2.0 * Gamma(dim) * radius;
 
         _offsets.resize(_dimension, 0);
         for (int i=0; i<_dimension; i++) {
             _offsets[i] = randRange((ull) 0, numeric_limits<ull>::max());
-        }
+        } 
 
         _hash_poly = numeric_limits<ull>::max() / _cell_size + 1;
     }
 
-    GridHashing(int dim, ull cs, const vector<ull> &offsets) {
-        _cell_size = cs;
-        _dimension = dim;
-        _offsets = offsets;
-        _hash_poly = numeric_limits<ull>::max() / _cell_size + 1;
+    static GridHashing<T> manual(int dim, ull cs, const vector<ull> &offsets = vector<ull>()) {
+        GridHashing<T> gh(dim, 1);
+        gh._cell_size = cs;
+        if (offsets.size() != 0) {
+            gh._offsets = offsets;
+        }
+        return gh;
     }
 
     ull hash(const point& p) const override {

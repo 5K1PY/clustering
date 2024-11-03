@@ -4,9 +4,10 @@
 #include "gtest/gtest.h"
 
 TEST(GridHashing, NoOffset) {
+    int dim = 2;
     ull cell_size = 10;
     ull offset_zero = numeric_limits<ll>::min();
-    GridHashing<ull> gh(2, cell_size, {offset_zero, offset_zero});
+    GridHashing<ull> gh = GridHashing<ull>::manual(dim, cell_size, {offset_zero, offset_zero});
 
     point p1({0, 0});
     ull p1_hash = gh.hash(p1); 
@@ -26,8 +27,9 @@ TEST(GridHashing, NoOffset) {
 }
 
 TEST(GridHashing, RandomOffset) {
+    int dim = 2;
     ull cell_size = 10;
-    GridHashing<ull> gh(2, 10);
+    GridHashing<ull> gh = GridHashing<ull>::manual(dim, cell_size);
 
     point p1({0, 0});
     ull p1_hash = gh.hash(p1); 
@@ -45,7 +47,7 @@ TEST(GridHashing, BucketSphereIntersect) {
     int dim = 2;
     ull cell_size = 10;
     ull offset_zero = numeric_limits<ll>::min();
-    GridHashing<ull> gh(dim, cell_size, {offset_zero, offset_zero});
+    GridHashing<ull> gh = GridHashing<ull>::manual(dim, cell_size, {offset_zero, offset_zero});
 
     double cs_half = cell_size / 2.0 / scale;
     double epsilon = sqrt(dim) / scale;
