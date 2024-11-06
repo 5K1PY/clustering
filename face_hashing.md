@@ -93,4 +93,4 @@ Afterwards, we check if $|p - p'| \leq \frac{\varepsilon}{2}$, and if so we add 
 For constructing point $p'$:
 1. We sort all coordinates by $\delta_i$ ascending.
 2. For the first $d - d'$ coordinates, if $\delta_i \geq (d-d') \cdot \varepsilon$ we decrease them until inequality flips.
-3. For the rest, we increase $\delta_i$ to $x \cdot \varepsilon$ if they are less than that.
+3. For the rest, we increase $\delta_i$ to $(d-d') \cdot \varepsilon$ if they are less than that.
