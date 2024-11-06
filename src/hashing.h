@@ -12,6 +12,10 @@ using namespace std;
 
 template<typename T>
 class Hashing {
+  protected:
+    ull inline normalize_coord(const point& p, int i) const {
+        return (ull) p.coords[i] - numeric_limits<ll>::min();
+    }
   public:
     virtual ~Hashing() = default;
 
@@ -32,9 +36,9 @@ class GridHashing : Hashing<T> {
     ull _cell_size;
     vector<ull> _offsets;
     ull _hash_poly, _hash_mod = ull(1e9)+7;
-
+  protected:
     ull inline normalize_coord(const point& p, int i) const {
-        return (ull) p.coords[i] - numeric_limits<ll>::min() + _offsets[i];
+        return Hashing<T>::normalize_coord(p, i) + _offsets[i];
     }
   public:
     static double Gamma(int dimension) { return sqrt(dimension); }
@@ -149,13 +153,55 @@ class FaceHashing : Hashing<T> {
 
     FaceHashing(int dim, ull radius) {
         _dimension = dim;
-        _hypercube_side = 2.0 * Gamma(dim) / sqrt(dim) * radius;
-        _epsilon = 2*radius
+        _hypercube_side = 2.0 * ull(Gamma(dim) / sqrt(dim) * radius);
+        _epsilon = 2*radius;
 
-        _hash_poly = numeric_limits<ull>::max() / _cell_size + 1;
+        _hash_poly = numeric_limits<ull>::max() / (_hypercube_side/2) + 1;
     }
 
     ull hash(const point& p) const override {
-        // TODO: Don't forget to normalize point's ll to ull
+        vector<ull> p_norm(_dimension);
+        for (int i=0; i<_dimension; i++) {
+            p_norm[i] = normalize_coord(p, i);
+        }
+
+        // distance calculation
+        vector<int> epsilon_multiply(_dimension+1, 0);
+        for (int i=0; i<_dimension; i++) {
+            ull delta = p_norm[i] % _hypercube_side;
+            delta = min(delta, _hypercube_side - delta);
+
+            epsilon_multiply[min(int(delta/_epsilon), _dimension)]++;
+        }
+
+        // find face dimension
+        int mul = -1;
+        int points_within = 0;
+        for (int x=0; x<_dimension; _dimension++) {
+            points_within += epsilon_multiply[x];
+            if (points_within >= x)
+                mul = x;
+        }
+
+        // normalize point
+        for (int i=0; i<_dimension; i++) {
+            ull alpha = p_norm[i] % _hypercube_side;
+
+            if (alpha < mul*_epsilon)
+                p_norm[i] -= alpha;
+            else if (alpha > _hypercube_side - mul*_epsilon)
+                p_norm[i] += _hypercube_side - alpha;
+            else
+                p_norm[i] += _hypercube_side/2 - alpha;
+        }
+
+        // compute hash
+        ull hash = 0;
+        for (int i=0; i<_dimension; i++) {
+            hash *= _hash_poly;
+            hash += 2*p_norm[i] / _hypercube_side;
+            hash %= _hash_mod;
+        }
+        return hash;
     }
 };
