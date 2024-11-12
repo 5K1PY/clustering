@@ -62,9 +62,9 @@ ull FaceHash(vector<float> point) {
     for (int i=0; i<d; i++) {
         float alpha = point[i] % l;
 
-        if (alpha < mul*eps)
+        if (alpha <= mul*eps)
             point[i] -= alpha;
-        else if (alpha > l - mul*eps)
+        else if (alpha >= l - mul*eps)
             point[i] += l - alpha;
         else
             point[i] += l/2.0 - alpha;

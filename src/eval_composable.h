@@ -13,8 +13,7 @@ using namespace std;
 
 template<typename T>
 vector<T> eval_composable(int dim, vector<tagged_point>& points, double radius, const Composable::Composable<T>& f) {
-    const ull CELL_SIZE = 2.0 * GridHashing<T>::Gamma(dim) * radius * scale;
-    GridHashing<T> hashing_scheme(dim, CELL_SIZE);
+    FaceHashing<T> hashing_scheme(dim, radius * scale);
 
     for (tagged_point &p: points) {
         p.hash = hashing_scheme.hash(p);

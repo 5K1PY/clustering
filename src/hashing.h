@@ -72,7 +72,7 @@ class GridHashing : Hashing<T> {
     ull hash(const point& p) const override {
         vector<ull> cell(_dimension);
         for (int i=0; i<_dimension; i++) {
-            cell[i] = normalize_coord(p, i) / _cell_size;
+            cell[i] = this->normalize_coord(p, i) / _cell_size;
         }
         ull hash = 0;
         for (int i=0; i<_dimension; i++) {
@@ -162,7 +162,7 @@ class FaceHashing : Hashing<T> {
     ull hash(const point& p) const override {
         vector<ull> p_norm(_dimension);
         for (int i=0; i<_dimension; i++) {
-            p_norm[i] = normalize_coord(p, i);
+            p_norm[i] = this->normalize_coord(p, i);
         }
 
         // distance calculation
@@ -177,7 +177,7 @@ class FaceHashing : Hashing<T> {
         // find face dimension
         int mul = -1;
         int points_within = 0;
-        for (int x=0; x<_dimension; _dimension++) {
+        for (int x=0; x<_dimension; x++) {
             points_within += epsilon_multiply[x];
             if (points_within >= x)
                 mul = x;
@@ -187,9 +187,9 @@ class FaceHashing : Hashing<T> {
         for (int i=0; i<_dimension; i++) {
             ull alpha = p_norm[i] % _hypercube_side;
 
-            if (alpha < mul*_epsilon)
+            if (alpha <= mul*_epsilon)
                 p_norm[i] -= alpha;
-            else if (alpha > _hypercube_side - mul*_epsilon)
+            else if (alpha >= _hypercube_side - mul*_epsilon)
                 p_norm[i] += _hypercube_side - alpha;
             else
                 p_norm[i] += _hypercube_side/2 - alpha;
@@ -203,5 +203,50 @@ class FaceHashing : Hashing<T> {
             hash %= _hash_mod;
         }
         return hash;
+    }
+
+    T eval_ball(
+        const tagged_point& center,
+        double radius,
+        const Composable::Composable<T>& f,
+        const unordered_map<ull, T>& bucket_values
+    ) const override {
+        T result = f.empty_value;
+        vector<tuple<int, ull, ull>> differences(_dimension);
+        for (int i=0; i<_dimension; i++) {
+            ull offset = this->normalize_coord(center, i) % _hypercube_side;
+            differences[i] = {i, offset, min(offset, _hypercube_side - offset)};
+        }
+        sort(differences.begin(), differences.end(), [](const auto& p, const auto& q) {
+            return get<2>(p) < get<2>(q);
+        });
+
+        for (int face_dim=0; face_dim <= _dimension; face_dim++) {
+            point closest(center);
+            int mul = _dimension - face_dim;
+            for (int i=0; i<mul; i++) {
+                auto [index, offset, diff] = differences[i];
+
+                if (diff > mul*_epsilon) {
+                    if (offset > _hypercube_side / 2) closest[index] += _hypercube_side - offset - mul*_epsilon;
+                    else                              closest[index] += mul*_epsilon - offset;
+                }
+            }
+            for (int i=mul; i<_dimension; i++) {
+                auto [index, offset, diff] = differences[i];
+
+                if (diff <= mul*_epsilon) {
+                    if (offset > _hypercube_side / 2) closest[index] += _hypercube_side - offset - mul*_epsilon - 1;
+                    else                              closest[index] += mul*_epsilon - offset + 1;
+                }
+            }
+            if (center.dist(closest) < radius) {
+                auto bucket_val = bucket_values.find(hash(closest));
+                if (bucket_val != bucket_values.end()) {
+                    result = f.compose(result, bucket_val->second);
+                }
+            }
+        }
+        return result;
     }
 };
