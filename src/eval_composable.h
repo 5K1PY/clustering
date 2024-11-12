@@ -12,11 +12,17 @@
 using namespace std;
 
 template<typename T>
-vector<T> eval_composable(int dim, vector<tagged_point>& points, double radius, const Composable::Composable<T>& f) {
-    FaceHashing<T> hashing_scheme(dim, radius * scale);
+vector<T> eval_composable(
+    int dim,
+    vector<tagged_point>& points,
+    double radius,
+    const Composable::Composable<T>& f,
+    HashingScheme hs
+) {
+    unique_ptr<Hashing<T>> hashing_scheme = make_hashing_scheme<T>(hs, dim, radius * scale);
 
     for (tagged_point &p: points) {
-        p.hash = hashing_scheme.hash(p);
+        p.hash = hashing_scheme->hash(p);
     }
 
     unordered_map<ull, T> bucket_values;
@@ -28,7 +34,7 @@ vector<T> eval_composable(int dim, vector<tagged_point>& points, double radius, 
 
     vector<T> proximity_points(points.size(), f.empty_value);
     for (int point_i=0; point_i<(int) points.size(); point_i++) {
-        proximity_points[point_i] = hashing_scheme.eval_ball(points[point_i], radius, f, bucket_values);
+        proximity_points[point_i] = hashing_scheme->eval_ball(points[point_i], radius, f, bucket_values);
     }
 
     return proximity_points;

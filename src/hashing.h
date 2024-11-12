@@ -3,6 +3,7 @@
 #include <vector>
 #include <limits>
 #include <random>
+#include <memory>
 
 #include "points.h"
 #include "random.h"
@@ -22,14 +23,14 @@ class Hashing {
     virtual ull hash(const point& p) const = 0;
     virtual T eval_ball(
         const tagged_point& center,
-        double radius,
+        const double radius,
         const Composable::Composable<T>& f,
         const unordered_map<ull, T>& bucket_values
     ) const = 0;
 };
 
 template<typename T>
-class GridHashing : Hashing<T> {
+class GridHashing : public Hashing<T> {
   private:
     int _dimension;
 
@@ -97,7 +98,7 @@ class GridHashing : Hashing<T> {
 
     T eval_ball(
         const tagged_point& center,
-        double radius,
+        const double radius,
         const Composable::Composable<T>& f,
         const unordered_map<ull, T>& bucket_values
     ) const override {
@@ -135,7 +136,7 @@ class GridHashing : Hashing<T> {
 };
 
 template<typename T>
-class FaceHashing : Hashing<T> {
+class FaceHashing : public Hashing<T> {
   private:
     int _dimension;
 
@@ -207,7 +208,7 @@ class FaceHashing : Hashing<T> {
 
     T eval_ball(
         const tagged_point& center,
-        double radius,
+        const double radius,
         const Composable::Composable<T>& f,
         const unordered_map<ull, T>& bucket_values
     ) const override {
@@ -250,3 +251,14 @@ class FaceHashing : Hashing<T> {
         return result;
     }
 };
+
+enum HashingScheme {GridHashingScheme, FaceHashingScheme};
+
+template<typename T>
+unique_ptr<Hashing<T>> make_hashing_scheme(HashingScheme hashing_scheme, int dimension, ull radius) {
+    switch (hashing_scheme) {
+        case GridHashingScheme: return make_unique<GridHashing<T>>(dimension, radius);
+        case FaceHashingScheme: return make_unique<FaceHashing<T>>(dimension, radius);
+        default: throw invalid_argument("Unsupported hashing scheme");
+    }
+}

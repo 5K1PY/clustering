@@ -7,21 +7,22 @@ BUILD_DIR = "build"
 DATA_DIR = "data"
 GENERATOR = "data_gen"
 JUDGE = "solution_cost"
-SOLUTIONS = ["mettu_plaxton"] + ["facility_set"]*5
+SOLUTIONS = ["mettu_plaxton"] + ["facility_set"]*6
 SOLUTION_ARGS = [
-    "",
-    "3c6da5d7",
-    "5b17b966",
-    "9a7aa40",
-    "3c6da5d7",
-    "8efbc170",
+    [],
+    ["grid_hashing", "3c6da5d7"],
+    ["grid_hashing", "5b17b966"],
+    ["grid_hashing", "9a7aa40"],
+    ["face_hashing", "3c6da5d7"],
+    ["face_hashing", "5b17b966"],
+    ["face_hashing", "9a7aa40"],
 ]
 
 SIZES = [10, 50, 500, 5000]
-DIMENSIONS = [2, 3]
+DIMENSIONS = [2, 3, 10]
 COST = 1
 
-def gen(size, dimension, cost) -> str:
+def gen(size: int, dimension: int, cost: float) -> str:
     filepath = os.path.join(DATA_DIR, f"gen_n{size}_d{dimension}.in")
     process = Popen(
         [os.path.join(BUILD_DIR, GENERATOR)],
@@ -35,7 +36,7 @@ def gen(size, dimension, cost) -> str:
     return filepath
 
 
-def solve(input_path, solution, args) -> str:
+def solve(input_path: str, solution: str, args: list[str]) -> tuple[str, float]:
     output_path = input_path.removesuffix(".in") + f".{solution}.out"
     start_time = time.time()
     process = Popen(
@@ -67,7 +68,7 @@ for size in SIZES:
     for dimension in DIMENSIONS:
         inp = gen(size, dimension, COST)
         for solution, args in zip(SOLUTIONS, SOLUTION_ARGS, strict=True):
-            print(f"{inp:20} {solution:15}", end=" ", flush=True)
+            print(f"{inp:20} {solution:15} {' '.join(args):21}", end="  ", flush=True)
             out, sol_time = solve(inp, solution, args)
-            print(f"{judge(inp, out):.4f}   {sol_time:.2f}s")
+            print(f"{judge(inp, out):.4f}  {sol_time:.2f}s")
         print("-"*50)

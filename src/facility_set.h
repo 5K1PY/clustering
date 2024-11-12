@@ -13,7 +13,7 @@ typedef unsigned long long ull;
 const float tau_param = 1.0;
 const float beta_param = 1.0;
 
-vector<int> compute_facilities(int dim, vector<tagged_point> points, double facility_cost) {
+vector<int> compute_facilities(int dim, vector<tagged_point> points, double facility_cost, HashingScheme hashing_scheme) {
     for (auto &p: points) {
         p.label = randRange(0ULL, numeric_limits<ull>::max());
     }
@@ -23,8 +23,8 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points, double faci
 
     double r_guess = 1.0 / scale;
     while (find(r_approx.begin(), r_approx.end(), 0) != r_approx.end()) {
-        vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size);
-        vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel);
+        vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size, hashing_scheme);
+        vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel, hashing_scheme);
         for (int i=0; i<(int) points.size(); i++) {
             if (r_approx[i] == 0 && approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
                 r_approx[i] = r_guess;
