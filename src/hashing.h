@@ -144,7 +144,7 @@ class FaceHashing : public Hashing<T> {
     ull _epsilon;
     ull _hash_poly, _hash_mod = ull(1e9)+7;
   public:
-    static double GammaMul(int dimension) { return 4.0; } // > 1 / dimension + 2
+    static double GammaMul(int dimension) { return 3.0; } // > 1 / dimension + 2
     static double Gamma(int dimension) { return dimension * sqrt(dimension); }
 
     int const dimension() const { return _dimension; }
@@ -154,7 +154,7 @@ class FaceHashing : public Hashing<T> {
 
     FaceHashing(int dim, ull radius) {
         _dimension = dim;
-        _hypercube_side = 2.0 * ull(Gamma(dim) / sqrt(dim) * radius);
+        _hypercube_side = 2.0 * ull(Gamma(dim) / sqrt(dim) * radius * GammaMul(dim));
         _epsilon = 2*radius;
 
         _hash_poly = numeric_limits<ull>::max() / (_hypercube_side/2) + 1;
