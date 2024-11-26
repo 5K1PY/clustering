@@ -21,6 +21,7 @@ vector<T> eval_composable(
 ) {
     unique_ptr<Hashing<T>> hashing_scheme = make_hashing_scheme<T>(hs, dim, radius * scale);
 
+    #pragma omp parallel for
     for (tagged_point &p: points) {
         p.hash = hashing_scheme->hash(p);
     }
@@ -33,6 +34,7 @@ vector<T> eval_composable(
     }
 
     vector<T> proximity_points(points.size(), f.empty_value);
+    #pragma omp parallel for
     for (int point_i=0; point_i<(int) points.size(); point_i++) {
         proximity_points[point_i] = hashing_scheme->eval_ball(points[point_i], radius, f, bucket_values);
     }
