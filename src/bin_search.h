@@ -5,9 +5,9 @@
 using namespace std;
     
 template<typename T>
-T binary_search(const function<bool(T)>& predicate, T lower, T upper) {
+T binary_search(const function<bool(T)>& predicate, T lower, T upper, T epsilon=1) {
     lower--;
-    while (lower + 1 < upper) {
+    while (lower + epsilon < upper) {
         T mid = (lower + upper) / 2;
         if (predicate(mid)) {
             upper = mid;
@@ -15,14 +15,14 @@ T binary_search(const function<bool(T)>& predicate, T lower, T upper) {
             lower = mid;
         }
     }
-    return lower + 1;
+    return lower + epsilon;
 }
 
 template<typename T>
-T binary_search(const function<bool(T)>& predicate, T lower) {
+T binary_search_up(const function<bool(T)>& predicate, T lower, T epsilon=1) {
     T diff = 1;
     while (!predicate(lower + diff)) {
         diff *= 2;
     }
-    return binary_search(predicate, lower + diff/2, lower + diff);
+    return binary_search<T>(predicate, lower + diff/2, lower + diff, epsilon);
 }

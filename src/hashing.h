@@ -5,6 +5,7 @@
 #include <random>
 #include <memory>
 
+#include "util.h"
 #include "points.h"
 #include "random.h"
 #include "composable.h"
@@ -261,4 +262,10 @@ unique_ptr<Hashing<T>> make_hashing_scheme(HashingScheme hashing_scheme, int dim
         case FaceHashingScheme: return make_unique<FaceHashing<T>>(dimension, radius);
         default: throw invalid_argument("Unsupported hashing scheme");
     }
+}
+
+HashingScheme choose_hashing_scheme(string choice) {
+    if (choice == "face_hashing")      return FaceHashingScheme;
+    else if (choice == "grid_hashing") return GridHashingScheme;
+    else                               invalid_usage_solver();
 }

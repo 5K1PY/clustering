@@ -9,7 +9,7 @@ SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 HEADERS = $(wildcard $(SRC_DIR)/*.h)
 TESTS = $(wildcard $(TESTS_DIR)/*.h)
 
-TARGET_NAMES = data_gen mettu_plaxton facility_set solution_cost
+TARGET_NAMES = data_gen mettu_plaxton facility_set solution_cost k_median
 TARGETS = $(patsubst %,$(BUILD_DIR)/%,$(TARGET_NAMES))
 
 all: $(TARGETS)
