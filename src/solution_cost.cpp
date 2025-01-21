@@ -16,15 +16,6 @@ int main(int argc, char const *argv[]) {
     while (solution >> x) {
         facilities.push_back(x);
     }
-
-    double cost = facilities.size() * facility_cost;
-    for (auto point: points) {
-        double min_dist = numeric_limits<double>::infinity();
-        for (auto facility_i: facilities) {
-            min_dist = min(min_dist, point.dist(points[facility_i]));
-        }
-        cost += min_dist;
-    }
-
+    double cost = solution_cost(points, facilities, facility_cost);
     cout << cost << endl;
 }
