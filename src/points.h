@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <cassert>
 
 using namespace std;
 
@@ -114,11 +115,12 @@ double aspect_ratio(const vector<tagged_point>& points) {
     double max_d = 0;  
     for (size_t i=0; i<points.size(); i++) {
         for (size_t j=i+1; j<points.size(); j++) {
-            max_d = max(max_d, points[i].dist(points[j]));
-            min_d = min(min_d, points[i].dist(points[j]));
+            double d = points[i].dist(points[j]);
+            max_d = max(max_d, d);
+            if (d != 0) min_d = min(min_d, d);
         }
     }
-    // TODO: What if min_d == 0
+    assert(min_d != 0);
     return max_d / min_d;
 }
 

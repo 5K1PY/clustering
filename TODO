@@ -1,7 +1,7 @@
-- Test, test, test
-- Better control
-- Add README and how to use
-- Test how fast is eval_composable if not virtual
+- Fix data_gen generation
+- Profile k-median
+
+
+- Parallel and Efficient Hierarchical k-Median Clustering
+- Compare with scikit learn k-means
 - Experiment with parameters
-- Better hashing function
-- Parallelization

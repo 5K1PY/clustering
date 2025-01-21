@@ -3,9 +3,10 @@
 #include "util.h"
 #include "hashing.h"
 #include "points.h"
-#include "facility_set.h"
+#include "k_median.h"
 
 using namespace std;
+
 
 int main(int argc, char const *argv[]) {
     if (argc != 3) invalid_usage_solver();
@@ -16,11 +17,7 @@ int main(int argc, char const *argv[]) {
     cin >> n >> dim >> k;
     auto points = load_points(n, dim);
 
-    double facility_cost = binary_search_up<double>([&dim, &points, &hashing_scheme, &k](double guess) {
-        return (int) compute_facilities(dim, points, guess, hashing_scheme).size() <= k;
-    }, 1e-8, 1e-10);
-
-    auto chosen = compute_facilities(dim, points, facility_cost, hashing_scheme);
+    auto chosen = compute_clusters_seq(dim, points, k, hashing_scheme);
     for (auto c: chosen) {
         cout << c << " ";
     }

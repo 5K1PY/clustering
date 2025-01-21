@@ -45,10 +45,10 @@ class GridHashing : public Hashing<T> {
   public:
     static double Gamma(int dimension) { return sqrt(dimension); }
 
-    int const dimension() const { return _dimension; }
-    ull const cell_size() const { return _cell_size; }
-    ull const hash_poly() const { return _hash_poly; }
-    ull const hash_mod() const { return _hash_mod; }
+    const int dimension() const { return _dimension; }
+    const ull cell_size() const { return _cell_size; }
+    const ull hash_poly() const { return _hash_poly; }
+    const ull hash_mod() const { return _hash_mod; }
 
     GridHashing(int dim, ull radius) {
         _dimension = dim;
@@ -254,6 +254,14 @@ class FaceHashing : public Hashing<T> {
 };
 
 enum HashingScheme {GridHashingScheme, FaceHashingScheme};
+
+double get_gamma(const HashingScheme hashing_scheme, int dimension) {
+    switch (hashing_scheme) {
+        case GridHashingScheme: return GridHashing<point>::Gamma(dimension);
+        case FaceHashingScheme: return FaceHashing<point>::Gamma(dimension);
+        default: throw invalid_argument("Unsupported hashing scheme");
+    }
+}
 
 template<typename T>
 unique_ptr<Hashing<T>> make_hashing_scheme(HashingScheme hashing_scheme, int dimension, ull radius) {
