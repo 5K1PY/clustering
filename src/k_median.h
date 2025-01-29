@@ -47,23 +47,27 @@ vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, Ha
     for (int i: facilities_indexes) {
         approx_k_facilities.push_back(points[i]);
     }
-    auto weighted_points = group_centers(points, approx_k_facilities);
-    
+    auto wp = group_centers(points, approx_k_facilities);
+    vector<pair<int, weighted_point>> weighted_points;
+    weighted_points.reserve(wp.size());
+    for (size_t i=0; i<wp.size(); i++) {
+        weighted_points.push_back({facilities_indexes[i], wp[i]});
+    }
+
     sort(
         weighted_points.begin(),
         weighted_points.end(),
-        [](const weighted_point& p1, const weighted_point& p2) { return p1.weight > p2.weight; }
+        [](auto& wp1, auto& wp2) { return wp1.second.weight > wp2.second.weight; }
     );
 
     vector<int> result;
     vector<tagged_point> centers;
     for (size_t i=0; i<weighted_points.size(); i++) {
-        weighted_point p = weighted_points[i];
+        weighted_point p = weighted_points[i].second;
         if (result.size() == 0 || min_dist(p, centers).dist * p.weight > 2 * opt_guess / (mu*k)) {
-            result.push_back(i); // TODO return actual index
+            result.push_back(weighted_points[i].first);
             centers.push_back(p);
         }
     }
-    for (auto p: centers) cout << p;
     return result;
 }
