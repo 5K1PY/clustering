@@ -110,7 +110,7 @@ double solution_cost(const vector<tagged_point>& points, const vector<int>& faci
     return cost;
 }
 
-double aspect_ratio(const vector<tagged_point>& points) {
+double aspect_ratio(int dim, const vector<tagged_point>& points) {
     double min_d = numeric_limits<double>::infinity();  
     double max_d = 0;  
     for (size_t i=0; i<points.size(); i++) {
@@ -122,6 +122,22 @@ double aspect_ratio(const vector<tagged_point>& points) {
     }
     assert(min_d != 0);
     return max_d / min_d;
+}
+
+double aspect_ratio_approx(int dim, const vector<tagged_point>& points) {
+    /* Approximation of aspect ratio in O(nd) */
+    point min_coords(dim), max_coords(dim);
+    for (int i=0; i<dim; i++) {
+        min_coords[i] = std::numeric_limits<ll>::max();
+        max_coords[i] = std::numeric_limits<ll>::min();
+    }
+    for (const point& p: points) {
+        for (int i=0; i<dim; i++) {
+            min_coords[i] = min(min_coords[i], p.coords[i]);
+            max_coords[i] = max(max_coords[i], p.coords[i]);
+        }
+    }
+    return min_coords.dist(max_coords) * sqrt(scale);
 }
 
 vector<tagged_point> load_points(int n, int dim) {

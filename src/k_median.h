@@ -29,7 +29,7 @@ vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, Ha
 
     double opt_guess = -1;
     double min_cost = numeric_limits<double>::infinity();
-    double delta = aspect_ratio(points);
+    double delta = aspect_ratio_approx(dim, points);
     for (int guess=1; guess < points.size()*delta; guess*=2) {
         double facility_cost = guess / k;
         auto facilities_indexes = compute_facilities(dim, points, facility_cost, hashing_scheme);
