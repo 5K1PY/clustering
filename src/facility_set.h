@@ -26,8 +26,12 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points, double faci
         vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size, hashing_scheme);
         vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel, hashing_scheme);
         for (int i=0; i<(int) points.size(); i++) {
-            if (r_approx[i] == 0 && approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
+            if (r_approx[i] != 0) continue;
+            if (approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
                 r_approx[i] = r_guess;
+                min_labels[i] = guess_min_labels[i];
+            } else if (approx_ball_sizes[i] == points.size()) {
+                r_approx[i] = facility_cost / (2 * beta_param * points.size());
                 min_labels[i] = guess_min_labels[i];
             }
         }
