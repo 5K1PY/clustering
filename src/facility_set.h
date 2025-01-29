@@ -30,7 +30,7 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points, double faci
             if (approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
                 r_approx[i] = r_guess;
                 min_labels[i] = guess_min_labels[i];
-            } else if (approx_ball_sizes[i] == points.size()) {
+            } else if (approx_ball_sizes[i] == (int) points.size()) {
                 r_approx[i] = facility_cost / (2 * beta_param * points.size());
                 min_labels[i] = guess_min_labels[i];
             }
