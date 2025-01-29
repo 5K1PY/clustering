@@ -24,6 +24,7 @@ vector<weighted_point> group_centers(const vector<tagged_point>& points, const v
 }
 
 vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.5) {
+    assert(k >= 1);
     assert(0 <= mu && mu <= 1);
 
     double opt_guess = -1;
