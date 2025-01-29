@@ -179,8 +179,8 @@ class FaceHashing : public Hashing<T> {
         // find face dimension
         int mul = -1;
         int points_within = 0;
-        for (int x=0; x<_dimension; x++) {
-            points_within += epsilon_multiply[x];
+        for (int x=1; x<=_dimension; x++) {
+            points_within += epsilon_multiply[x-1];
             if (points_within >= x)
                 mul = x;
         }
@@ -189,9 +189,9 @@ class FaceHashing : public Hashing<T> {
         for (int i=0; i<_dimension; i++) {
             ull alpha = p_norm[i] % _hypercube_side;
 
-            if (alpha <= mul*_epsilon)
+            if (mul != -1 && alpha <= mul*_epsilon)
                 p_norm[i] -= alpha;
-            else if (alpha >= _hypercube_side - mul*_epsilon)
+            else if (mul != -1 && alpha >= _hypercube_side - mul*_epsilon)
                 p_norm[i] += _hypercube_side - alpha;
             else
                 p_norm[i] += _hypercube_side/2 - alpha;
@@ -229,17 +229,17 @@ class FaceHashing : public Hashing<T> {
             for (int i=0; i<mul; i++) {
                 auto [index, offset, diff] = differences[i];
 
-                if (diff > mul*_epsilon) {
-                    if (offset > _hypercube_side / 2) closest[index] += _hypercube_side - offset - mul*_epsilon;
-                    else                              closest[index] += mul*_epsilon - offset;
+                if (diff >= mul*_epsilon) {
+                    if (offset > _hypercube_side / 2) closest[index] += _hypercube_side - offset - mul*_epsilon + 1;
+                    else                              closest[index] += mul*_epsilon - offset - 1;
                 }
             }
             for (int i=mul; i<_dimension; i++) {
                 auto [index, offset, diff] = differences[i];
 
-                if (diff <= mul*_epsilon) {
-                    if (offset > _hypercube_side / 2) closest[index] += _hypercube_side - offset - mul*_epsilon - 1;
-                    else                              closest[index] += mul*_epsilon - offset + 1;
+                if (diff < (i+1)*_epsilon) {
+                    if (offset > _hypercube_side / 2) closest[index] += _hypercube_side - offset - (i+1)*_epsilon;
+                    else                              closest[index] += (i+1)*_epsilon - offset;
                 }
             }
             if (center.dist(closest) < radius) {
