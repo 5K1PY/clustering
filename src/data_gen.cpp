@@ -8,7 +8,7 @@
 using namespace std;
 
 constexpr ull MAX_COORD = 1e17;
-constexpr ull CLUSTER_RADIUS = 1e3;
+constexpr ull CLUSTER_RADIUS = 1e15;
 
 point rand_point(int dim) {
     point p(dim);
