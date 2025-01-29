@@ -52,8 +52,8 @@ ull FaceHash(vector<float> point) {
     // find face dimension
     int mul = -1;
     int points_within = 0;
-    for (int x=0; x<d; d++) {
-        points_within += epsilon_multiply[x];
+    for (int x=1; x<=d; d++) {
+        points_within += epsilon_multiply[x-1];
         if (points_within >= x)
             mul = x;
     }
@@ -62,9 +62,9 @@ ull FaceHash(vector<float> point) {
     for (int i=0; i<d; i++) {
         float alpha = point[i] % l;
 
-        if (alpha <= mul*eps)
+        if (mul != -1 && alpha <= mul*eps)
             point[i] -= alpha;
-        else if (alpha >= l - mul*eps)
+        else if (mul != -1 && alpha >= l - mul*eps)
             point[i] += l - alpha;
         else
             point[i] += l/2.0 - alpha;
@@ -93,4 +93,4 @@ Afterwards, we check if $|p - p'| \leq \frac{\varepsilon}{2}$, and if so we add 
 For constructing point $p'$:
 1. We sort all coordinates by $\delta_i$ ascending.
 2. For the first $d - d'$ coordinates, if $\delta_i \geq (d-d') \cdot \varepsilon$ we decrease them until inequality flips.
-3. For the rest, we increase $\delta_i$ to $(d-d') \cdot \varepsilon$ if they are less than that.
+3. For the rest, we increase $\delta_i$ to $(j+1) \cdot \varepsilon$ if they are less than that. (Where $\delta_i$ is $j$-th smallest among all $\delta_i$.)
