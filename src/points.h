@@ -1,10 +1,13 @@
 #pragma once
 
+#include <algorithm>
+#include <assert.h>
+#include <iomanip>
+#include <iostream>
 #include <math.h>
 #include <vector>
-#include <iostream>
-#include <iomanip>
-#include <cassert>
+
+#include "random.h"
 
 using namespace std;
 
@@ -43,6 +46,10 @@ struct point {
     }
 
     ll& operator[](size_t idx) {
+        return coords[idx];
+    }
+
+    const ll& operator[](size_t idx) const {
         return coords[idx];
     }
 
@@ -110,6 +117,42 @@ double solution_cost(const vector<tagged_point>& points, const vector<int>& faci
     return cost;
 }
 
+double nearest_neighbors(int dim, const vector<tagged_point>& points) {
+    /* Nearest neighbors using Johnson–Lindenstrauss */
+    const int tries = points.size() / 1e2;
+    double result = 0;
+    for (int _=0; _<tries; _++) {
+        vector<double> projection(dim);
+        double norm = 0;
+        for (int i=0; i<dim; i++) {
+            projection[i] = randNormal(0.0, 1.0);
+            norm += projection[i]*projection[i];
+        }
+        norm = sqrt(norm);
+        for (int i=0; i<dim; i++) {
+            projection[i] /= norm;
+        }
+
+        vector<double> projected(points.size(), 0);
+        #pragma omp parallel for
+        for (size_t i=0; i<points.size(); i++) {
+            for (int d=0; d<dim; d++) {
+                projected[i] += projection[d] * ((double) points[i][d] / scale);
+            }
+        }
+        sort(projected.begin(), projected.end());
+        double min_dist = projected[1] - projected[0];
+
+        #pragma omp parallel for
+        for (size_t i=1; i<points.size(); i++) {
+            min_dist = min(min_dist, projected[i] - projected[i-1]);
+        }
+        result = max(result, min_dist);
+    }
+    cerr << result << endl;
+    return result;
+}
+
 double aspect_ratio(int dim, const vector<tagged_point>& points) {
     double min_d = numeric_limits<double>::infinity();  
     double max_d = 0;  
@@ -125,7 +168,7 @@ double aspect_ratio(int dim, const vector<tagged_point>& points) {
 }
 
 double aspect_ratio_approx(int dim, const vector<tagged_point>& points) {
-    /* Approximation of aspect ratio in O(nd) */
+    /* Approximation of aspect ratio in O(nd + nlogn) */
     point min_coords(dim), max_coords(dim);
     for (int i=0; i<dim; i++) {
         min_coords[i] = std::numeric_limits<ll>::max();
@@ -137,7 +180,7 @@ double aspect_ratio_approx(int dim, const vector<tagged_point>& points) {
             max_coords[i] = max(max_coords[i], p.coords[i]);
         }
     }
-    return min_coords.dist(max_coords) * sqrt(scale);
+    return min_coords.dist(max_coords) / nearest_neighbors(dim, points);
 }
 
 vector<tagged_point> load_points(int n, int dim) {
