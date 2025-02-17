@@ -143,13 +143,11 @@ double nearest_neighbors(int dim, const vector<tagged_point>& points) {
         sort(projected.begin(), projected.end());
         double min_dist = projected[1] - projected[0];
 
-        #pragma omp parallel for
         for (size_t i=1; i<points.size(); i++) {
             min_dist = min(min_dist, projected[i] - projected[i-1]);
         }
         result = max(result, min_dist);
     }
-    cerr << result << endl;
     return result;
 }
 
