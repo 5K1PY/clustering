@@ -23,14 +23,15 @@ vector<weighted_point> group_centers(const vector<tagged_point>& points, const v
     return weighted_points;
 }
 
-vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.5) {
+vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.04) {
     assert(k >= 1);
     assert(0 <= mu && mu <= 1);
 
     double opt_guess = -1;
     double min_cost = numeric_limits<double>::infinity();
     double delta = aspect_ratio_approx(dim, points);
-    for (int guess=1; guess < points.size()*delta; guess*=2) {
+    for (unsigned long long guess=1; guess < points.size()*delta; guess*=2) {
+        assert(guess > 0);
         double facility_cost = guess / k;
         auto facilities_indexes = compute_facilities(dim, points, facility_cost, hashing_scheme);
         if (facilities_indexes.size() > 2*get_gamma(hashing_scheme, dim)*k) continue;
