@@ -32,7 +32,7 @@ vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, Ha
     double delta = aspect_ratio_approx(dim, points);
     for (unsigned long long guess=1; guess < points.size()*delta; guess*=2) {
         assert(guess > 0);
-        double facility_cost = guess / k;
+        double facility_cost = (double) guess / k;
         auto facilities_indexes = compute_facilities(dim, points, facility_cost, hashing_scheme);
         if (facilities_indexes.size() > 2*get_gamma(hashing_scheme, dim)*k) continue;
         double cost = solution_cost(points, facilities_indexes, facility_cost);
