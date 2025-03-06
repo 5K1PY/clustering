@@ -21,9 +21,9 @@ TEST(BinSearch, Array) {
 }
 
 TEST(BinSearch, IntegersNoUpLimit) {
-    ASSERT_EQ(binary_search<int>([](int x){return x >= 4;}, 0), 4);
-    ASSERT_EQ(binary_search<int>([](int x){return x >= 5;}, 0), 5);
-    ASSERT_EQ(binary_search<int>([](int x){return x >= 6;}, 0), 6);
-    ASSERT_EQ(binary_search<int>([](int x){return x >= 7;}, 0), 7);
-    ASSERT_EQ(binary_search<int>([](int x){return x >= 8;}, 0), 8);
+    ASSERT_EQ(binary_search_up<int>([](int x){return x >= 4;}, 0), 4);
+    ASSERT_EQ(binary_search_up<int>([](int x){return x >= 5;}, 0), 5);
+    ASSERT_EQ(binary_search_up<int>([](int x){return x >= 6;}, 0), 6);
+    ASSERT_EQ(binary_search_up<int>([](int x){return x >= 7;}, 0), 7);
+    ASSERT_EQ(binary_search_up<int>([](int x){return x >= 8;}, 0), 8);
 }
