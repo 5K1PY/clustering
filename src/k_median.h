@@ -23,12 +23,14 @@ vector<weighted_point> group_centers(const vector<tagged_point>& points, const v
     return weighted_points;
 }
 
-vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.04) {
+vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.4) {
     assert(k >= 1);
     assert(0 <= mu && mu <= 1);
 
     double opt_guess = -1;
     double min_cost = numeric_limits<double>::infinity();
+    int guess_size = -1;
+    // TODO: Rescale aspect ratio and guess by minimal point distance
     double delta = aspect_ratio_approx(dim, points);
     for (unsigned long long guess=1; guess < points.size()*delta; guess*=2) {
         assert(guess > 0);
@@ -39,8 +41,10 @@ vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, Ha
         if (min_cost > cost) {
             min_cost = cost;
             opt_guess = guess;
+            guess_size = facilities_indexes.size();
         }
     }
+    cerr << "guess size " << guess_size << endl; 
     assert(opt_guess != -1);
     auto facilities_indexes = compute_facilities(dim, points, opt_guess / k, hashing_scheme);
 
