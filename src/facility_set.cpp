@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "util.h"
-#include "hashing.h"
-#include "points.h"
-#include "facility_set.h"
+#include "lib/util.hpp"
+#include "lib/hashing.hpp"
+#include "lib/points.hpp"
+#include "lib/facility_set.hpp"
 
 using namespace std;
 
@@ -13,12 +13,12 @@ int main(int argc, char const *argv[]) {
     seed(strtoull(argv[2], 0, 16));
 
     int n, dim; double facility_cost;
-    cin >> n >> dim >> facility_cost;
+    std::cin >> n >> dim >> facility_cost;
     auto points = load_points(n, dim);
 
     auto chosen = compute_facilities(dim, points, facility_cost, hashing_scheme);
     for (auto c: chosen) {
-        cout << c << " ";
+        std::cout << c << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "../src/bin_search.h"
+#include "../src/lib/bin_search.hpp"
 
 #include "gtest/gtest.h"
 

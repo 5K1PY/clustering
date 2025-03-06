@@ -1,5 +1,5 @@
 #pragma once
-#include "../src/points.h"
+#include "../src/lib/points.hpp"
 
 #include "gtest/gtest.h"
 

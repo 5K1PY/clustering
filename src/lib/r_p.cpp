@@ -1,15 +1,11 @@
-#pragma once
-
 #include <utility>
 #include <vector>
 #include <algorithm>
 
-#include "points.h"
-#include "bin_search.h"
+#include "points.hpp"
+#include "bin_search.hpp"
 
-using namespace std;
-
-double calc_rp_first_k(vector<tagged_point>& points, tagged_point from, int k, double facility_cost) {
+double calc_rp_first_k(std::vector<tagged_point>& points, tagged_point from, int k, double facility_cost) {
     double rp = facility_cost;
     for (int i=0; i<k; i++) {
         rp += from.dist(points[i]);
@@ -17,9 +13,9 @@ double calc_rp_first_k(vector<tagged_point>& points, tagged_point from, int k, d
     return rp / k;
 }
 
-double calc_rp(vector<tagged_point>& points, int from, double facility_cost) {
-    vector<tagged_point> copied_points(points);
-    sort(
+double calc_rp(std::vector<tagged_point>& points, int from, double facility_cost) {
+    std::vector<tagged_point> copied_points(points);
+    std::sort(
         copied_points.begin(), copied_points.end(),
         [&points, &from](const point& X, const point& Y){
             return points[from].dist_squared(X) < points[from].dist_squared(Y);
@@ -37,22 +33,22 @@ double calc_rp(vector<tagged_point>& points, int from, double facility_cost) {
     return calc_rp_first_k(copied_points, points[from], included, facility_cost);
 }
 
-void calc_rps(vector<tagged_point>& points, double facility_cost) {
+void calc_rps(std::vector<tagged_point>& points, double facility_cost) {
     for (int i=0; i<(int) points.size(); i++) {
         points[i].r_p = calc_rp(points, i, facility_cost);
     }
 }
 
-vector<int> mettu_plaxton(vector<tagged_point>& original_points) {
-    vector<pair<int, tagged_point*>> points(original_points.size());
+std::vector<int> mettu_plaxton(std::vector<tagged_point>& original_points) {
+    std::vector<std::pair<int, tagged_point*>> points(original_points.size());
     for (int i=0; i<(int) original_points.size(); i++) {
         points[i] = {i, &original_points[i]};
     }
 
-    vector<int> chosen;
-    sort(
+    std::vector<int> chosen;
+    std::sort(
         points.begin(), points.end(),
-        [](const pair<int, tagged_point*>& X, const pair<int, tagged_point*>& Y) {
+        [](const std::pair<int, tagged_point*>& X, const std::pair<int, tagged_point*>& Y) {
             return X.second->r_p < Y.second->r_p;
         }
     );

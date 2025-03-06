@@ -2,10 +2,8 @@
 #include <iostream>
 #include <random>
 
-#include "random.h"
-#include "points.h"
-
-using namespace std;
+#include "lib/random.hpp"
+#include "lib/points.hpp"
 
 constexpr ull MAX_COORD = 1e17;
 constexpr ull CLUSTER_RADIUS = 1e15;
@@ -26,22 +24,22 @@ point rand_shift(int dim) {
     return p;
 }
 
-vector<point> gen_random(int n, int dim) {
-    vector<point> points(n, point(dim));
+std::vector<point> gen_random(int n, int dim) {
+    std::vector<point> points(n, point(dim));
     for (int i=0; i<n; i++) {
         points[i] = rand_point(dim);
     }
     return points;
 }
 
-vector<point> gen_clusters(int n, int dim) {
+std::vector<point> gen_clusters(int n, int dim) {
     int cluster_count = sqrt(n);
     int free_points = sqrt(n); 
 
     int all_points_sz = 0;
-    vector<point> all_points(n, point(dim));
+    std::vector<point> all_points(n, point(dim));
 
-    vector<point> centers(cluster_count, point(dim));
+    std::vector<point> centers(cluster_count, point(dim));
     for (int i=0; i<cluster_count; i++) {
         centers[i] = all_points[all_points_sz++] = rand_point(dim);
     }
@@ -62,14 +60,14 @@ vector<point> gen_clusters(int n, int dim) {
 int main() {
     int dimension, n;
     double facility_cost;
-    cin >> n >> dimension >> facility_cost;
+    std::cin >> n >> dimension >> facility_cost;
 
-    vector<point> points = gen_clusters(n, dimension);
+    std::vector<point> points = gen_clusters(n, dimension);
 
-    cout << n << " " << dimension << " " << facility_cost << "\n";
+    std::cout << n << " " << dimension << " " << facility_cost << "\n";
     for (auto p: points) {
         for (int i=0; i<dimension; i++) {
-            cout << ((double) p[i] / scale) << (i+1 < dimension ? " " : "\n");
+            std::cout << ((double) p[i] / scale) << (i+1 < dimension ? " " : "\n");
         }
     }
 }

@@ -1,30 +1,24 @@
-#pragma once
-
 #include <limits>
 
-#include "random.h"
-#include "points.h"
-#include "composable.h"
-#include "eval_composable.h"
-#include "bin_search.h"
+#include "types.hpp"
+#include "random.hpp"
+#include "points.hpp"
+#include "composable.hpp"
+#include "eval_composable.hpp"
+#include "facility_set.hpp"
 
-typedef unsigned long long ull;
-
-const float tau_param = 1.0;
-const float beta_param = 1.0;
-
-vector<int> compute_facilities(int dim, vector<tagged_point> points, double facility_cost, HashingScheme hashing_scheme) {
+std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, double facility_cost, HashingScheme hashing_scheme) {
     for (auto &p: points) {
-        p.label = randRange(0ULL, numeric_limits<ull>::max());
+        p.label = randRange(0ULL, std::numeric_limits<ull>::max());
     }
     
-    vector<double> r_approx(points.size(), 0);
-    vector<const tagged_point*> min_labels(points.size(), NULL);
+    std::vector<double> r_approx(points.size(), 0);
+    std::vector<const tagged_point*> min_labels(points.size(), NULL);
 
     double r_guess = 1.0 / scale;
     while (find(r_approx.begin(), r_approx.end(), 0) != r_approx.end()) {
-        vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size, hashing_scheme);
-        vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel, hashing_scheme);
+        std::vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size, hashing_scheme);
+        std::vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel, hashing_scheme);
         for (int i=0; i<(int) points.size(); i++) {
             if (r_approx[i] != 0) continue;
             if (approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
@@ -38,7 +32,7 @@ vector<int> compute_facilities(int dim, vector<tagged_point> points, double faci
         r_guess *= 2;
     }
 
-    vector<int> results;
+    std::vector<int> results;
     for (int i=0; i<(int) points.size(); i++) {
         if (&points[i] == min_labels[i] || randBool(tau_param * r_approx[i] / facility_cost))
             results.push_back(i);

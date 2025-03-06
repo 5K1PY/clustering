@@ -1,22 +1,22 @@
 #pragma once
 
-#include <vector>
+#include <algorithm>
 #include <limits>
-#include <random>
 #include <memory>
+#include <queue>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
-#include "util.h"
-#include "points.h"
-#include "random.h"
-#include "composable.h"
-
-using namespace std;
+#include "points.hpp"
+#include "random.hpp"
+#include "composable.hpp"
 
 template<typename T>
 class Hashing {
   protected:
     ull inline normalize_coord(const point& p, int i) const {
-        return (ull) p.coords[i] - numeric_limits<ll>::min();
+        return (ull) p.coords[i] - std::numeric_limits<ll>::min();
     }
   public:
     virtual ~Hashing() = default;
@@ -26,7 +26,7 @@ class Hashing {
         const tagged_point& center,
         const double radius,
         const Composable::Composable<T>& f,
-        const unordered_map<ull, T>& bucket_values
+        const std::unordered_map<ull, T>& bucket_values
     ) const = 0;
 };
 
@@ -36,7 +36,7 @@ class GridHashing : public Hashing<T> {
     int _dimension;
 
     ull _cell_size;
-    vector<ull> _offsets;
+    std::vector<ull> _offsets;
     ull _hash_poly, _hash_mod = ull(1e9)+7;
   protected:
     ull inline normalize_coord(const point& p, int i) const {
@@ -57,13 +57,13 @@ class GridHashing : public Hashing<T> {
 
         _offsets.resize(_dimension, 0);
         for (int i=0; i<_dimension; i++) {
-            _offsets[i] = randRange((ull) 0, numeric_limits<ull>::max());
+            _offsets[i] = randRange((ull) 0, std::numeric_limits<ull>::max());
         } 
 
-        _hash_poly = numeric_limits<ull>::max() / _cell_size + 1;
+        _hash_poly = std::numeric_limits<ull>::max() / _cell_size + 1;
     }
 
-    static GridHashing<T> manual(int dim, ull cs, const vector<ull> &offsets = vector<ull>()) {
+    static GridHashing<T> manual(int dim, ull cs, const std::vector<ull> &offsets = std::vector<ull>()) {
         GridHashing<T> gh(dim, 1);
         gh._cell_size = cs;
         if (offsets.size() != 0) {
@@ -73,7 +73,7 @@ class GridHashing : public Hashing<T> {
     }
 
     ull hash(const point& p) const override {
-        vector<ull> cell(_dimension);
+        std::vector<ull> cell(_dimension);
         for (int i=0; i<_dimension; i++) {
             cell[i] = this->normalize_coord(p, i) / _cell_size;
         }
@@ -102,13 +102,13 @@ class GridHashing : public Hashing<T> {
         const tagged_point& center,
         const double radius,
         const Composable::Composable<T>& f,
-        const unordered_map<ull, T>& bucket_values
+        const std::unordered_map<ull, T>& bucket_values
     ) const override {
         T result = f.empty_value;
 
-        queue<point> neighborhood;
+        std::queue<point> neighborhood;
         neighborhood.push(center);
-        unordered_set<ull> found_cells;
+        std::unordered_set<ull> found_cells;
 
         while (neighborhood.size()) {
             point p = neighborhood.front(); neighborhood.pop();
@@ -159,22 +159,22 @@ class FaceHashing : public Hashing<T> {
         _hypercube_side = 2.0 * ull(Gamma(dim) / sqrt(dim) * radius * GammaMul(dim));
         _epsilon = 2*radius;
 
-        _hash_poly = numeric_limits<ull>::max() / (_hypercube_side/2) + 1;
+        _hash_poly = std::numeric_limits<ull>::max() / (_hypercube_side/2) + 1;
     }
 
     ull hash(const point& p) const override {
-        vector<ull> p_norm(_dimension);
+        std::vector<ull> p_norm(_dimension);
         for (int i=0; i<_dimension; i++) {
             p_norm[i] = this->normalize_coord(p, i);
         }
 
         // distance calculation
-        vector<int> epsilon_multiply(_dimension+1, 0);
+        std::vector<int> epsilon_multiply(_dimension+1, 0);
         for (int i=0; i<_dimension; i++) {
             ull delta = p_norm[i] % _hypercube_side;
-            delta = min(delta, _hypercube_side - delta);
+            delta = std::min(delta, _hypercube_side - delta);
 
-            epsilon_multiply[min(int(delta/_epsilon), _dimension)]++;
+            epsilon_multiply[std::min(int(delta/_epsilon), _dimension)]++;
         }
 
         // find face dimension
@@ -212,16 +212,16 @@ class FaceHashing : public Hashing<T> {
         const tagged_point& center,
         const double radius,
         const Composable::Composable<T>& f,
-        const unordered_map<ull, T>& bucket_values
+        const std::unordered_map<ull, T>& bucket_values
     ) const override {
         T result = f.empty_value;
-        vector<tuple<int, ull, ull>> differences(_dimension);
+        std::vector<std::tuple<int, ull, ull>> differences(_dimension);
         for (int i=0; i<_dimension; i++) {
             ull offset = this->normalize_coord(center, i) % _hypercube_side;
-            differences[i] = {i, offset, min(offset, _hypercube_side - offset)};
+            differences[i] = {i, offset, std::min(offset, _hypercube_side - offset)};
         }
-        sort(differences.begin(), differences.end(), [](const auto& p, const auto& q) {
-            return get<2>(p) < get<2>(q);
+        std::sort(differences.begin(), differences.end(), [](const auto& p, const auto& q) {
+            return std::get<2>(p) < std::get<2>(q);
         });
 
         for (int face_dim=0; face_dim <= _dimension; face_dim++) {
@@ -256,25 +256,15 @@ class FaceHashing : public Hashing<T> {
 
 enum HashingScheme {GridHashingScheme, FaceHashingScheme};
 
-double get_gamma(const HashingScheme hashing_scheme, int dimension) {
-    switch (hashing_scheme) {
-        case GridHashingScheme: return GridHashing<point>::Gamma(dimension);
-        case FaceHashingScheme: return FaceHashing<point>::Gamma(dimension);
-        default: throw invalid_argument("Unsupported hashing scheme");
-    }
-}
+double get_gamma(const HashingScheme hashing_scheme, int dimension);
 
 template<typename T>
-unique_ptr<Hashing<T>> make_hashing_scheme(HashingScheme hashing_scheme, int dimension, ull radius) {
+std::unique_ptr<Hashing<T>> make_hashing_scheme(HashingScheme hashing_scheme, int dimension, ull radius) {
     switch (hashing_scheme) {
-        case GridHashingScheme: return make_unique<GridHashing<T>>(dimension, radius);
-        case FaceHashingScheme: return make_unique<FaceHashing<T>>(dimension, radius);
-        default: throw invalid_argument("Unsupported hashing scheme");
+        case GridHashingScheme: return std::make_unique<GridHashing<T>>(dimension, radius);
+        case FaceHashingScheme: return std::make_unique<FaceHashing<T>>(dimension, radius);
+        default: throw std::invalid_argument("Unsupported hashing scheme");
     }
 }
 
-HashingScheme choose_hashing_scheme(string choice) {
-    if (choice == "face_hashing")      return FaceHashingScheme;
-    else if (choice == "grid_hashing") return GridHashingScheme;
-    else                               invalid_usage_solver();
-}
+HashingScheme choose_hashing_scheme(std::string choice);

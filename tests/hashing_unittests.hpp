@@ -1,12 +1,12 @@
 #pragma once
-#include "../src/hashing.h"
+#include "../src/lib/hashing.hpp"
 
 #include "gtest/gtest.h"
 
 TEST(GridHashing, NoOffset) {
     int dim = 2;
     ull cell_size = 10;
-    ull offset_zero = numeric_limits<ll>::min();
+    ull offset_zero = std::numeric_limits<ll>::min();
     GridHashing<ull> gh = GridHashing<ull>::manual(dim, cell_size, {offset_zero, offset_zero});
 
     point p1({0, 0});
@@ -46,7 +46,7 @@ TEST(GridHashing, RandomOffset) {
 TEST(GridHashing, BucketSphereIntersect) {
     int dim = 2;
     ull cell_size = 10;
-    ull offset_zero = numeric_limits<ll>::min();
+    ull offset_zero = std::numeric_limits<ll>::min();
     GridHashing<ull> gh = GridHashing<ull>::manual(dim, cell_size, {offset_zero, offset_zero});
 
     double cs_half = cell_size / 2.0 / scale;

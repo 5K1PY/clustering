@@ -1,13 +1,6 @@
 #pragma once
 
-#include <queue>
-#include <unordered_set>
-#include <unordered_map>
-
-#include "points.h"
-#include "r_p.h"
-
-using namespace std;
+#include "points.hpp"
 
 namespace Composable {
     template<typename T>
@@ -42,6 +35,6 @@ namespace Composable {
         }
     };
 
-    __Size Size = __Size();
-    __MinLabel MinLabel = __MinLabel();
+    extern __Size Size;
+    extern __MinLabel MinLabel;
 }

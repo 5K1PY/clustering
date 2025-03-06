@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "util.h"
-#include "hashing.h"
-#include "points.h"
-#include "k_median.h"
+#include "lib/util.hpp"
+#include "lib/hashing.hpp"
+#include "lib/points.hpp"
+#include "lib/k_median.hpp"
 
 using namespace std;
 
@@ -14,12 +14,12 @@ int main(int argc, char const *argv[]) {
     seed(strtoull(argv[2], 0, 16));
 
     int n, dim, k;
-    cin >> n >> dim >> k;
+    std::cin >> n >> dim >> k;
     auto points = load_points(n, dim);
 
     auto chosen = compute_clusters_seq(dim, points, k, hashing_scheme);
     for (auto c: chosen) {
-        cout << c << " ";
+        std::cout << c << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
 }

@@ -1,19 +1,15 @@
-#pragma once
-
+#include <algorithm>
+#include <vector>
 #include <limits>
-#include <cassert>
+#include <assert.h>
 
-#include "random.h"
-#include "points.h"
-#include "composable.h"
-#include "eval_composable.h"
-#include "bin_search.h"
-#include "facility_set.h"
+#include "points.hpp"
+#include "facility_set.hpp"
 
 typedef unsigned long long ull;
 
-vector<weighted_point> group_centers(const vector<tagged_point>& points, const vector<tagged_point>& approx_k_facilities) {
-    vector<weighted_point> weighted_points;
+std::vector<weighted_point> group_centers(const std::vector<tagged_point>& points, const std::vector<tagged_point>& approx_k_facilities) {
+    std::vector<weighted_point> weighted_points;
     for (auto p: approx_k_facilities) {
         weighted_points.push_back(weighted_point(p));
     }
@@ -23,13 +19,12 @@ vector<weighted_point> group_centers(const vector<tagged_point>& points, const v
     return weighted_points;
 }
 
-vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.4) {
+std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.4) {
     assert(k >= 1);
     assert(0 <= mu && mu <= 1);
 
     double opt_guess = -1;
-    double min_cost = numeric_limits<double>::infinity();
-    int guess_size = -1;
+    double min_cost = std::numeric_limits<double>::infinity();
     // TODO: Rescale aspect ratio and guess by minimal point distance
     double delta = aspect_ratio_approx(dim, points);
     for (unsigned long long guess=1; guess < points.size()*delta; guess*=2) {
@@ -41,33 +36,31 @@ vector<int> compute_clusters_seq(int dim, vector<tagged_point> points, int k, Ha
         if (min_cost > cost) {
             min_cost = cost;
             opt_guess = guess;
-            guess_size = facilities_indexes.size();
         }
     }
-    cerr << "guess size " << guess_size << endl; 
     assert(opt_guess != -1);
     auto facilities_indexes = compute_facilities(dim, points, opt_guess / k, hashing_scheme);
 
-    vector<tagged_point> approx_k_facilities;
+    std::vector<tagged_point> approx_k_facilities;
     approx_k_facilities.reserve(facilities_indexes.size());
     for (int i: facilities_indexes) {
         approx_k_facilities.push_back(points[i]);
     }
     auto wp = group_centers(points, approx_k_facilities);
-    vector<pair<int, weighted_point>> weighted_points;
+    std::vector<std::pair<int, weighted_point>> weighted_points;
     weighted_points.reserve(wp.size());
     for (size_t i=0; i<wp.size(); i++) {
         weighted_points.push_back({facilities_indexes[i], wp[i]});
     }
 
-    sort(
+    std::sort(
         weighted_points.begin(),
         weighted_points.end(),
         [](auto& wp1, auto& wp2) { return wp1.second.weight > wp2.second.weight; }
     );
 
-    vector<int> result;
-    vector<tagged_point> centers;
+    std::vector<int> result;
+    std::vector<tagged_point> centers;
     for (size_t i=0; i<weighted_points.size(); i++) {
         weighted_point p = weighted_points[i].second;
         if (result.size() == 0 || min_dist(p, centers).dist * p.weight > 2 * opt_guess / (mu*k)) {
