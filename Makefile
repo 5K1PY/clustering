@@ -6,7 +6,8 @@ BUILD_DIR = build
 TESTS_DIR = tests
 
 SOURCES = $(wildcard $(SRC_DIR)/lib/*.cpp)
-TESTS = $(wildcard $(TESTS_DIR)/lib/*.hpp)
+HEADERS = $(wildcard $(SRC_DIR)/lib/*.hpp)
+TESTS = $(wildcard $(TESTS_DIR)/*.hpp)
 
 TARGET_NAMES = data_gen mettu_plaxton facility_set solution_cost k_median
 TARGETS = $(patsubst %,$(BUILD_DIR)/%,$(TARGET_NAMES))
