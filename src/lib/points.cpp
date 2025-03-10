@@ -70,7 +70,7 @@ double nearest_neighbors(int dim, const std::vector<tagged_point>& points) {
     return result;
 }
 
-double aspect_ratio(int dim, const std::vector<tagged_point>& points) {
+std::pair<double, double> aspect_ratio(int dim, const std::vector<tagged_point>& points) {
     double min_d = std::numeric_limits<double>::infinity();  
     double max_d = 0;  
     for (size_t i=0; i<points.size(); i++) {
@@ -81,10 +81,10 @@ double aspect_ratio(int dim, const std::vector<tagged_point>& points) {
         }
     }
     assert(min_d != 0);
-    return max_d / min_d;
+    return {min_d, max_d};
 }
 
-double aspect_ratio_approx(int dim, const std::vector<tagged_point>& points) {
+std::pair<double, double> aspect_ratio_approx(int dim, const std::vector<tagged_point>& points) {
     /* Approximation of aspect ratio in O(nd + nlogn) */
     point min_coords(dim), max_coords(dim);
     for (int i=0; i<dim; i++) {
@@ -97,7 +97,7 @@ double aspect_ratio_approx(int dim, const std::vector<tagged_point>& points) {
             max_coords[i] = std::max(max_coords[i], p.coords[i]);
         }
     }
-    return min_coords.dist(max_coords) / nearest_neighbors(dim, points);
+    return {nearest_neighbors(dim, points), min_coords.dist(max_coords)};
 }
 
 std::vector<tagged_point> load_points(int n, int dim) {

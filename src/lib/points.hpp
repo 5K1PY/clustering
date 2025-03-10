@@ -86,6 +86,6 @@ struct dist_pair { int index; double dist; };
 dist_pair min_dist(const point& p, const std::vector<tagged_point>& points);
 double solution_cost(const std::vector<tagged_point>& points, const std::vector<int>& facilities, double facility_cost);
 double nearest_neighbors(int dim, const std::vector<tagged_point>& points);
-double aspect_ratio(int dim, const std::vector<tagged_point>& points);
-double aspect_ratio_approx(int dim, const std::vector<tagged_point>& points);
+std::pair<double, double> aspect_ratio(int dim, const std::vector<tagged_point>& points);
+std::pair<double, double> aspect_ratio_approx(int dim, const std::vector<tagged_point>& points);
 std::vector<tagged_point> load_points(int n, int dim);
