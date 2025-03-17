@@ -63,7 +63,8 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
     std::vector<tagged_point> centers;
     for (size_t i=0; i<weighted_points.size(); i++) {
         weighted_point p = weighted_points[i].second;
-        if (result.size() == 0 || POWZ(min_dist(p, centers).dist) * p.weight > POWZ(2) * opt_guess / (mu*k)) {
+        double md = min_dist(p, centers).dist;
+        if (result.size() == 0 || POWZ(md) * p.weight > POWZ(2) * opt_guess / (mu*k)) {
             result.push_back(weighted_points[i].first);
             centers.push_back(p);
         }

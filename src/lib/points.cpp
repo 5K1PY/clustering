@@ -32,7 +32,8 @@ double solution_cost(const std::vector<tagged_point>& points, const std::vector<
 
     double cost = facilities.size() * facility_cost;
     for (auto point: points) {
-        cost += POWZ(min_dist(point, facility_points).dist);
+        double md = min_dist(point, facility_points).dist;
+        cost += POWZ(md);
     }
     return cost;
 }
