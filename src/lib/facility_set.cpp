@@ -26,7 +26,7 @@ std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, d
                 r_approx[i] = r_guess;
                 min_labels[i] = guess_min_labels[i];
             } else if (approx_ball_sizes[i] == (int) points.size()) {
-                r_approx[i] = facility_cost / (2 * beta_param * points.size());
+                r_approx[i] = INVPOWZ(facility_cost / (2 * POWZ(beta_param) * points.size()));
                 min_labels[i] = guess_min_labels[i];
             }
         }
