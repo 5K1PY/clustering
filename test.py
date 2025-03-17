@@ -3,11 +3,13 @@ import os
 from subprocess import Popen, PIPE
 import time
 
+Z = "2"
+
 BUILD_DIR = "build"
 DATA_DIR = "data"
-GENERATOR = "data_gen"
-JUDGE = "solution_cost"
-SOLUTIONS = ["mettu_plaxton"] + ["facility_set"]*6
+GENERATOR = f"data_gen_z{Z}"
+JUDGE = f"solution_cost_z{Z}"
+SOLUTIONS = [f"mettu_plaxton_z{Z}"] + [f"facility_set_z{Z}"]*6
 SOLUTION_ARGS = [
     [],
     ["grid_hashing", "3c6da5d7"],
@@ -18,9 +20,9 @@ SOLUTION_ARGS = [
     ["face_hashing", "9a7aa40"],
 ]
 
-SIZES = [10, 50, 500, 5000]
-DIMENSIONS = [2, 3, 10]
-COST = 1
+SIZES = [100, 1000, int(1e5), int(1e6)]
+DIMENSIONS = [2, 5, 10]
+COST = 10
 
 def gen(size: int, dimension: int, cost: float) -> str:
     filepath = os.path.join(DATA_DIR, f"gen_n{size}_d{dimension}.in")
@@ -68,7 +70,7 @@ for size in SIZES:
     for dimension in DIMENSIONS:
         inp = gen(size, dimension, COST)
         for solution, args in zip(SOLUTIONS, SOLUTION_ARGS, strict=True):
-            print(f"{inp:20} {solution:15} {' '.join(args):21}", end="  ", flush=True)
+            print(f"{inp:20} {solution:20} {' '.join(args):21}", end="  ", flush=True)
             out, sol_time = solve(inp, solution, args)
             print(f"{judge(inp, out):.4f}  {sol_time:.2f}s")
         print("-"*50)

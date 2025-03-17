@@ -5,6 +5,7 @@
 
 #include "points.hpp"
 #include "facility_set.hpp"
+#include "pow_z.hpp"
 
 typedef unsigned long long ull;
 
@@ -26,7 +27,7 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
     double opt_guess = -1;
     double min_cost = std::numeric_limits<double>::infinity();
     auto [min_d, max_d] = aspect_ratio_approx(dim, points);
-    for (double guess=min_d; guess < points.size()*max_d; guess*=2) {
+    for (double guess=POWZ(min_d); guess < points.size()*POWZ(max_d); guess*=2) {
         assert(guess > 0);
         double facility_cost = guess / k;
         auto facilities_indexes = compute_facilities(dim, points, facility_cost, hashing_scheme);
@@ -62,7 +63,7 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
     std::vector<tagged_point> centers;
     for (size_t i=0; i<weighted_points.size(); i++) {
         weighted_point p = weighted_points[i].second;
-        if (result.size() == 0 || min_dist(p, centers).dist * p.weight > 2 * opt_guess / (mu*k)) {
+        if (result.size() == 0 || POWZ(min_dist(p, centers).dist) * p.weight > POWZ(2) * opt_guess / (mu*k)) {
             result.push_back(weighted_points[i].first);
             centers.push_back(p);
         }

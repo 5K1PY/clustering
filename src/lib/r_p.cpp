@@ -4,13 +4,14 @@
 
 #include "points.hpp"
 #include "bin_search.hpp"
+#include "pow_z.hpp"
 
 double calc_rp_first_k(std::vector<tagged_point>& points, tagged_point from, int k, double facility_cost) {
-    double rp = facility_cost;
+    double sum = facility_cost;
     for (int i=0; i<k; i++) {
-        rp += from.dist(points[i]);
+        sum += POWZ(from.dist(points[i]));
     }
-    return rp / k;
+    return INVPOWZ(sum / k);
 }
 
 double calc_rp(std::vector<tagged_point>& points, int from, double facility_cost) {

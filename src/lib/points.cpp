@@ -7,6 +7,7 @@
 #include "types.hpp"
 #include "random.hpp"
 #include "points.hpp"
+#include "pow_z.hpp"
 
 const ll scale = (ll) 1e16;
 
@@ -31,7 +32,7 @@ double solution_cost(const std::vector<tagged_point>& points, const std::vector<
 
     double cost = facilities.size() * facility_cost;
     for (auto point: points) {
-        cost += min_dist(point, facility_points).dist;
+        cost += POWZ(min_dist(point, facility_points).dist);
     }
     return cost;
 }

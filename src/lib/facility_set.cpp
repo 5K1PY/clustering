@@ -6,6 +6,7 @@
 #include "composable.hpp"
 #include "eval_composable.hpp"
 #include "facility_set.hpp"
+#include "pow_z.hpp"
 
 std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, double facility_cost, HashingScheme hashing_scheme) {
     for (auto &p: points) {
@@ -21,7 +22,7 @@ std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, d
         std::vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel, hashing_scheme);
         for (int i=0; i<(int) points.size(); i++) {
             if (r_approx[i] != 0) continue;
-            if (approx_ball_sizes[i] >= facility_cost / (2 * beta_param * r_guess)) {
+            if (approx_ball_sizes[i] >= facility_cost / (2 * POWZ(beta_param) * POWZ(r_guess))) {
                 r_approx[i] = r_guess;
                 min_labels[i] = guess_min_labels[i];
             } else if (approx_ball_sizes[i] == (int) points.size()) {
@@ -34,7 +35,7 @@ std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, d
 
     std::vector<int> results;
     for (int i=0; i<(int) points.size(); i++) {
-        if (&points[i] == min_labels[i] || randBool(tau_param * r_approx[i] / facility_cost))
+        if (&points[i] == min_labels[i] || randBool(tau_param * POWZ(r_approx[i]) / facility_cost))
             results.push_back(i);
     }
     return results;
