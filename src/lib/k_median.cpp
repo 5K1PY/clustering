@@ -20,7 +20,23 @@ std::vector<weighted_point> group_centers(const std::vector<tagged_point>& point
     return weighted_points;
 }
 
-std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu) {
+
+std::vector<int> weak_coresets_seq(const std::vector<std::pair<int, weighted_point>>& weighted_points, const int k, const double mu, const double guess) {
+    assert(guess > 0);
+    std::vector<int> result;
+    std::vector<tagged_point> centers;
+    for (size_t i=0; i<weighted_points.size(); i++) {
+        weighted_point p = weighted_points[i].second;
+        double md = min_dist(p, centers).dist;
+        if (result.size() == 0 || POWZ(md) * p.weight > POWZ(2) * guess / (mu*k)) {
+            result.push_back(weighted_points[i].first);
+            centers.push_back(p);
+        }
+    }
+    return result;
+}
+
+std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points, const int k, HashingScheme hashing_scheme, const double mu) {
     assert(k >= 1);
     assert(0.0 < mu && mu < 1.0);
 
@@ -59,26 +75,17 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
         [](auto& wp1, auto& wp2) { return wp1.second.weight > wp2.second.weight; }
     );
 
-    double best_cost = std::numeric_limits<double>::infinity();
-    std::vector<int> best_result;
-    for (double guess=POWZ(min_d); guess < points.size()*POWZ(max_d); guess*=2) {
-        assert(guess > 0);
-        std::vector<int> result;
-        std::vector<tagged_point> centers;
-        for (size_t i=0; i<weighted_points.size(); i++) {
-            weighted_point p = weighted_points[i].second;
-            double md = min_dist(p, centers).dist;
-            if (result.size() == 0 || POWZ(md) * p.weight > POWZ(2) * guess / (mu*k)) {
-                result.push_back(weighted_points[i].first);
-                centers.push_back(p);
-            }
-        }
-        double cost = solution_cost(points, result, 0);
-        if (result.size() < (1.0 + mu)*k && cost < best_cost) {
-            best_cost = cost;
-            best_result = result;
-        }
+    int max_pow2 = log2(points.size()*POWZ(max_d) / POWZ(min_d)) + 1;
+    std::vector<double> costs(max_pow2, std::numeric_limits<double>::infinity());
+    #pragma omp parallel for
+    for (int pow2 = 0; pow2 < max_pow2; pow2++) {
+        double guess = POWZ(min_d) * pow(2.0, pow2);
+        std::vector<int> result = weak_coresets_seq(weighted_points, k, mu, guess);
+        if (result.size() < (1.0 + mu)*k)
+            costs[pow2] = solution_cost(points, result, 0);
     }
-    assert(best_result.size() > 0);
-    return best_result;
+    int best_pow2 = std::min_element(costs.begin(), costs.end()) - costs.begin();
+    assert(best_pow2 != std::numeric_limits<double>::infinity());
+
+    return weak_coresets_seq(weighted_points, k, mu, POWZ(min_d) * pow(2.0, best_pow2));
 }
