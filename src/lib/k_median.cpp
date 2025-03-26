@@ -20,9 +20,9 @@ std::vector<weighted_point> group_centers(const std::vector<tagged_point>& point
     return weighted_points;
 }
 
-std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu=0.4) {
+std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points, int k, HashingScheme hashing_scheme, double mu) {
     assert(k >= 1);
-    assert(0 <= mu && mu <= 1);
+    assert(0.0 < mu && mu < 1.0);
 
     double opt_guess = -1;
     double min_cost = std::numeric_limits<double>::infinity();
@@ -59,15 +59,26 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
         [](auto& wp1, auto& wp2) { return wp1.second.weight > wp2.second.weight; }
     );
 
-    std::vector<int> result;
-    std::vector<tagged_point> centers;
-    for (size_t i=0; i<weighted_points.size(); i++) {
-        weighted_point p = weighted_points[i].second;
-        double md = min_dist(p, centers).dist;
-        if (result.size() == 0 || POWZ(md) * p.weight > POWZ(2) * opt_guess / (mu*k)) {
-            result.push_back(weighted_points[i].first);
-            centers.push_back(p);
+    double best_cost = std::numeric_limits<double>::infinity();
+    std::vector<int> best_result;
+    for (double guess=POWZ(min_d); guess < points.size()*POWZ(max_d); guess*=2) {
+        assert(guess > 0);
+        std::vector<int> result;
+        std::vector<tagged_point> centers;
+        for (size_t i=0; i<weighted_points.size(); i++) {
+            weighted_point p = weighted_points[i].second;
+            double md = min_dist(p, centers).dist;
+            if (result.size() == 0 || POWZ(md) * p.weight > POWZ(2) * guess / (mu*k)) {
+                result.push_back(weighted_points[i].first);
+                centers.push_back(p);
+            }
+        }
+        double cost = solution_cost(points, result, 0);
+        if (result.size() < (1.0 + mu)*k && cost < best_cost) {
+            best_cost = cost;
+            best_result = result;
         }
     }
-    return result;
+    assert(best_result.size() > 0);
+    return best_result;
 }
