@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import numpy as np
 from sklearn.cluster import KMeans
 
@@ -14,8 +15,8 @@ def main():
     kmeans = KMeans(n_clusters=k, random_state=42)
     kmeans.fit(data)
 
-    print(kmeans.inertia_)
-
+    for center in kmeans.cluster_centers_:
+        print(" ".join(map(str, center)))
 
 if __name__ == "__main__":
     main()

@@ -3,7 +3,7 @@
 #include "lib/util.hpp"
 #include "lib/hashing.hpp"
 #include "lib/points.hpp"
-#include "lib/k_median.hpp"
+#include "lib/clustering.hpp"
 
 using namespace std;
 
@@ -19,7 +19,7 @@ int main(int argc, char const *argv[]) {
 
     auto chosen = compute_clusters_seq(dim, points, k, hashing_scheme);
     for (auto c: chosen) {
-        std::cout << c << " ";
+        std::cout << points[c];
     }
     std::cout << std::endl;
 }
