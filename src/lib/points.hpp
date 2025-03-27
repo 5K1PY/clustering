@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <math.h>
 #include <iostream>
 #include <vector>
@@ -7,6 +8,7 @@
 #include "types.hpp"
 
 extern const ll scale;
+
 
 struct point {
     std::vector<ll> coords;
@@ -58,9 +60,9 @@ struct point {
         return sqrt(dist_squared(Y));
     }
 
-    std::ostream& operator<<(std::ostream& os) {
+    friend std::ostream& operator<<(std::ostream& os, const point& p) {
         std::string s = "";
-        for (auto c: coords) {
+        for (auto c: p.coords) {
             std::cout << s << double(c) / scale;
             s = " ";
         }
@@ -82,9 +84,26 @@ struct weighted_point : public tagged_point {
     weighted_point(const tagged_point& p) : tagged_point(p) {}
 };
 
+template <typename T>
+concept IsPoint = std::is_base_of_v<point, T>;
+
 struct dist_pair { int index; double dist; };
-dist_pair min_dist(const point& p, const std::vector<tagged_point>& points);
-double solution_cost(const std::vector<tagged_point>& points, const std::vector<int>& facilities, double facility_cost);
+template <IsPoint T>
+dist_pair min_dist(const point& p, const std::vector<T>& points) {
+    int min_i = -1;
+    double min_dist2 = std::numeric_limits<double>::infinity();
+    for (size_t i=0; i<points.size(); i++) {
+        double dist2 = p.dist_squared(points[i]);
+        if (dist2 < min_dist2) {
+            min_dist2 = dist2;
+            min_i = i;
+        }
+    }
+    return {min_i, sqrt(min_dist2)};
+}
+
+double solution_cost(const std::vector<tagged_point>& points, const std::vector<point>& facilities, double facility_cost);
+double solution_cost(const std::vector<tagged_point>& points, const std::vector<int>& facility_indexes, double facility_cost);
 double nearest_neighbors(int dim, const std::vector<tagged_point>& points);
 std::pair<double, double> aspect_ratio(int dim, const std::vector<tagged_point>& points);
 std::pair<double, double> aspect_ratio_approx(int dim, const std::vector<tagged_point>& points);

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++17 -O2 -fopenmp
+CXXFLAGS = -Wall -std=c++20 -O2 -fopenmp
 
 SRC_DIR = src
 BUILD_DIR = build
@@ -9,7 +9,7 @@ SOURCES = $(wildcard $(SRC_DIR)/lib/*.cpp)
 HEADERS = $(wildcard $(SRC_DIR)/lib/*.hpp)
 TESTS = $(wildcard $(TESTS_DIR)/*.hpp)
 
-TARGET_NAMES = data_gen mettu_plaxton facility_set solution_cost k_median
+TARGET_NAMES = data_gen mettu_plaxton facility_set facility_set_cost k_median k_set_cost
 TARGETS_Z1 = $(patsubst %,$(BUILD_DIR)/%_z1,$(TARGET_NAMES))
 TARGETS_Z2 = $(patsubst %,$(BUILD_DIR)/%_z2,$(TARGET_NAMES))
 

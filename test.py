@@ -3,12 +3,12 @@ import os
 from subprocess import Popen, PIPE
 import time
 
-Z = "2"
+Z = "1"
 
 BUILD_DIR = "build"
 DATA_DIR = "data"
 GENERATOR = f"data_gen_z{Z}"
-JUDGE = f"solution_cost_z{Z}"
+JUDGE = f"facility_set_cost_z{Z}"
 SOLUTIONS = [f"mettu_plaxton_z{Z}"] + [f"facility_set_z{Z}"]*6
 SOLUTION_ARGS = [
     [],

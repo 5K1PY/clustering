@@ -5,8 +5,6 @@
 #include "lib/points.hpp"
 #include "lib/facility_set.hpp"
 
-using namespace std;
-
 int main(int argc, char const *argv[]) {
     if (argc != 3) invalid_usage_solver();
     HashingScheme hashing_scheme = choose_hashing_scheme(argv[1]);
@@ -18,7 +16,7 @@ int main(int argc, char const *argv[]) {
 
     auto chosen = compute_facilities(dim, points, facility_cost, hashing_scheme);
     for (auto c: chosen) {
-        std::cout << c << " ";
+        std::cout << points[c];
     }
     std::cout << std::endl;
 }

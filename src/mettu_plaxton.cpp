@@ -12,7 +12,6 @@ int main(int argc, char const *argv[]) {
 
     auto chosen = mettu_plaxton(points);
     for (auto c: chosen) {
-        std::cout << c << " ";
+        std::cout << points[c];
     }
-    std::cout << std::endl;
 }

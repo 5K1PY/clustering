@@ -11,31 +11,22 @@
 
 const ll scale = (ll) 1e16;
 
-dist_pair min_dist(const point& p, const std::vector<tagged_point>& points) {
-    int min_i = -1;
-    double min_dist2 = std::numeric_limits<double>::infinity();
-    for (size_t i=0; i<points.size(); i++) {
-        double dist2 = p.dist_squared(points[i]);
-        if (dist2 < min_dist2) {
-            min_dist2 = dist2;
-            min_i = i;
-        }
-    }
-    return {min_i, sqrt(min_dist2)};
-}
-
-double solution_cost(const std::vector<tagged_point>& points, const std::vector<int>& facilities, double facility_cost) {
-    std::vector<tagged_point> facility_points;
-    facility_points.reserve(facilities.size());
-    for (auto i: facilities)
-        facility_points.push_back(points[i]);
-
+double solution_cost(const std::vector<tagged_point>& points, const std::vector<point>& facilities, double facility_cost) {
     double cost = facilities.size() * facility_cost;
     for (auto point: points) {
-        double md = min_dist(point, facility_points).dist;
+        double md = min_dist(point, facilities).dist;
         cost += POWZ(md);
     }
     return cost;
+}
+
+double solution_cost(const std::vector<tagged_point>& points, const std::vector<int>& facility_indexes, double facility_cost) {
+    std::vector<point> facilities;
+    facilities.reserve(facility_indexes.size());
+    for (auto i: facility_indexes)
+        facilities.push_back(points[i]);
+
+    return solution_cost(points, facilities, facility_cost);
 }
 
 double nearest_neighbors(int dim, const std::vector<tagged_point>& points) {

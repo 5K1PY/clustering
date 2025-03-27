@@ -9,10 +9,15 @@ int main(int argc, char const *argv[]) {
     std::cin >> n >> dim >> facility_cost;
     auto points = load_points(n, dim);
 
-    int x = 0;
-    std::vector<int> facilities;
-    while (solution >> x) {
-        facilities.push_back(x);
+    std::vector<point> facilities;
+    double coord;
+    std::vector<double> coords;
+    while (solution >> coord) {
+        coords.push_back(coord);
+        if (coords.size() == (size_t) dim) {
+            facilities.push_back(point(coords));
+            coords.clear();
+        }
     }
     double cost = solution_cost(points, facilities, facility_cost);
     std::cout << cost << std::endl;
