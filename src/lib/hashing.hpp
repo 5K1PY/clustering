@@ -43,7 +43,7 @@ class GridHashing : public Hashing<T> {
         return Hashing<T>::normalize_coord(p, i) + _offsets[i];
     }
   public:
-    static double Gamma(int dimension) { return pow(2, dimension); }
+    static double Gamma(int dimension) { return sqrt(dimension); }
 
     const int dimension() const { return _dimension; }
     const ull cell_size() const { return _cell_size; }
@@ -52,7 +52,9 @@ class GridHashing : public Hashing<T> {
 
     GridHashing(int dim, ull radius) {
         _dimension = dim;
-        _cell_size = sqrt(dim) * 2.0 * radius;
+        // Setting cell_size to be dim-times bigger actually provides
+        // great speedup with better results
+        _cell_size = dim * 2.0 * radius;
 
         _offsets.resize(_dimension, 0);
         for (int i=0; i<_dimension; i++) {
