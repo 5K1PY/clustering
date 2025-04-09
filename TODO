@@ -1,5 +1,2 @@
-- Beta param
-
-- Parallel and Efficient Hierarchical k-Median Clustering
-- Compare with scikit learn k-means
+- Run k-means on server
 - Experiment with parameters
