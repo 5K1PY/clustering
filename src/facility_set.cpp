@@ -7,14 +7,14 @@
 
 int main(int argc, char const *argv[]) {
     if (argc != 3) invalid_usage_solver();
-    HashingScheme hashing_scheme = choose_hashing_scheme(argv[1]);
+    HashingSchemeChoice hs_choice = choose_hashing_scheme(argv[1]);
     seed(strtoull(argv[2], 0, 16));
 
     int n, dim; double facility_cost;
     std::cin >> n >> dim >> facility_cost;
     auto points = load_points(n, dim);
 
-    auto chosen = compute_facilities(dim, points, facility_cost, hashing_scheme);
+    auto chosen = compute_facilities(dim, points, facility_cost, hs_choice);
     for (auto c: chosen) {
         std::cout << points[c];
     }

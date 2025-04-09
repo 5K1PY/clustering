@@ -36,7 +36,7 @@ std::vector<int> weak_coresets_seq(const std::vector<std::pair<int, weighted_poi
     return result;
 }
 
-std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points, const int k, HashingScheme hashing_scheme, const double mu) {
+std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points, const int k, HashingSchemeChoice hs_choice, const double mu=0.1) {
     assert(k >= 1);
     assert(0.0 < mu && mu < 1.0);
 
@@ -46,8 +46,8 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
     for (double guess=POWZ(min_d); guess < points.size()*POWZ(max_d); guess*=2) {
         assert(guess > 0);
         double facility_cost = guess / k;
-        auto facilities_indexes = compute_facilities(dim, points, facility_cost, hashing_scheme);
-        if (facilities_indexes.size() > 2*get_gamma(hashing_scheme, dim)*k) continue;
+        auto facilities_indexes = compute_facilities(dim, points, facility_cost, hs_choice);
+        if (facilities_indexes.size() > 2*get_gamma(hs_choice, dim)*k) continue;
         double cost = solution_cost(points, facilities_indexes, facility_cost);
         if (min_cost > cost) {
             min_cost = cost;
@@ -55,7 +55,7 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
         }
     }
     assert(opt_guess != -1);
-    auto facilities_indexes = compute_facilities(dim, points, opt_guess / k, hashing_scheme);
+    auto facilities_indexes = compute_facilities(dim, points, opt_guess / k, hs_choice);
 
     std::vector<tagged_point> approx_k_facilities;
     approx_k_facilities.reserve(facilities_indexes.size());

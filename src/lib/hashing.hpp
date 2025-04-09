@@ -13,13 +13,13 @@
 #include "composable.hpp"
 
 template<typename T>
-class Hashing {
+class HashingScheme {
   protected:
     ull inline normalize_coord(const point& p, int i) const {
         return (ull) p.coords[i] - std::numeric_limits<ll>::min();
     }
   public:
-    virtual ~Hashing() = default;
+    virtual ~HashingScheme() = default;
 
     virtual ull hash(const point& p) const = 0;
     virtual T eval_ball(
@@ -31,7 +31,7 @@ class Hashing {
 };
 
 template<typename T>
-class GridHashing : public Hashing<T> {
+class GridHashing : public HashingScheme<T> {
   private:
     int _dimension;
 
@@ -40,7 +40,7 @@ class GridHashing : public Hashing<T> {
     ull _hash_poly, _hash_mod = ull(1e9)+7;
   protected:
     ull inline normalize_coord(const point& p, int i) const {
-        return Hashing<T>::normalize_coord(p, i) + _offsets[i];
+        return HashingScheme<T>::normalize_coord(p, i) + _offsets[i];
     }
   public:
     static double Gamma(int dimension) { return sqrt(dimension); }
@@ -139,7 +139,7 @@ class GridHashing : public Hashing<T> {
 };
 
 template<typename T>
-class FaceHashing : public Hashing<T> {
+class FaceHashing : public HashingScheme<T> {
   private:
     int _dimension;
 
@@ -255,17 +255,17 @@ class FaceHashing : public Hashing<T> {
     }
 };
 
-enum HashingScheme {GridHashingScheme, FaceHashingScheme};
+enum HashingSchemeChoice {GridHashingScheme, FaceHashingScheme};
 
-double get_gamma(const HashingScheme hashing_scheme, int dimension);
+double get_gamma(const HashingSchemeChoice hs_choice, int dimension);
 
 template<typename T>
-std::unique_ptr<Hashing<T>> make_hashing_scheme(HashingScheme hashing_scheme, int dimension, ull radius) {
-    switch (hashing_scheme) {
+std::unique_ptr<HashingScheme<T>> make_hashing_scheme(HashingSchemeChoice hs_choice, int dimension, ull radius) {
+    switch (hs_choice) {
         case GridHashingScheme: return std::make_unique<GridHashing<T>>(dimension, radius);
         case FaceHashingScheme: return std::make_unique<FaceHashing<T>>(dimension, radius);
         default: throw std::invalid_argument("Unsupported hashing scheme");
     }
 }
 
-HashingScheme choose_hashing_scheme(std::string choice);
+HashingSchemeChoice choose_hashing_scheme(std::string choice);
