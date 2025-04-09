@@ -59,7 +59,7 @@ def gen(size: int, dimension: int, k_or_cost: float) -> str:
 
 
 def solve(input_path: str, solution: str, args: list[str]) -> tuple[str, float]:
-    output_path = input_path.removesuffix(".in") + f".{solution}.out"
+    output_path = input_path.removesuffix(".in") + f".{solution}.{'.'.join(args)}.out"
     start_time = time.time()
     process = Popen(
         [os.path.join(BUILD_DIR, solution), *args],
