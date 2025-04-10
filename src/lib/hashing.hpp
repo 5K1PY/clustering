@@ -191,9 +191,9 @@ class FaceHashing : public HashingScheme<T> {
         for (int i=0; i<_dimension; i++) {
             ull alpha = p_norm[i] % _hypercube_side;
 
-            if (mul != -1 && alpha <= mul*_epsilon)
+            if (mul != -1 && alpha < mul*_epsilon)
                 p_norm[i] -= alpha;
-            else if (mul != -1 && alpha >= _hypercube_side - mul*_epsilon)
+            else if (mul != -1 && alpha > _hypercube_side - mul*_epsilon)
                 p_norm[i] += _hypercube_side - alpha;
             else
                 p_norm[i] += _hypercube_side/2 - alpha;
