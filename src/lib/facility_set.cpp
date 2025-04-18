@@ -8,7 +8,7 @@
 #include "facility_set.hpp"
 #include "pow_z.hpp"
 
-const double beta_mul = 0.25;
+const double beta_mul = 0.25;  // Experimental constant to scale beta by.
 
 std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, double facility_cost, HashingSchemeChoice hs_choice) {
     for (auto &p: points) {

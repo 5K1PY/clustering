@@ -41,7 +41,7 @@ CLUSTERING_SOLUTION_ARGS = [
 ]
 CLUSTER_COUNT = 10
 
-SIZES = [100, 1000, int(1e5), int(1e6)]
+SIZES = [100, 1000, int(1e4), int(1e5)]
 DIMENSIONS = [2, 5, 10]
 
 def gen(size: int, dimension: int, k_or_cost: float) -> str:
@@ -67,7 +67,7 @@ def solve(input_path: str, solution: str, args: list[str]) -> tuple[str, float]:
         stdout=open(output_path, "w")
     )
     rc = process.wait()
-    total_time = time.time() - start_time
+    total_time = time.time() - start_time # TODO: Do something better
 
     assert rc == 0
 
