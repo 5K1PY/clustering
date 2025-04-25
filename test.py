@@ -13,6 +13,7 @@ Z = args.z
 
 BUILD_DIR = "build"
 DATA_DIR = "data"
+GEN_DATA_DIR = "gen"
 GENERATOR = f"data_gen_z{Z}"
 
 FACILITY_JUDGE = f"facility_set_cost_z{Z}"
@@ -45,7 +46,7 @@ SIZES = [100, 1000, int(1e4), int(1e5)]
 DIMENSIONS = [2, 5, 10]
 
 def gen(size: int, dimension: int, k_or_cost: float) -> str:
-    filepath = os.path.join(DATA_DIR, f"gen_n{size}_d{dimension}.in")
+    filepath = os.path.join(DATA_DIR, GEN_DATA_DIR, f"gen_n{size}_d{dimension}.in")
     process = Popen(
         [os.path.join(BUILD_DIR, GENERATOR)],
         stdin=PIPE,
@@ -56,6 +57,22 @@ def gen(size: int, dimension: int, k_or_cost: float) -> str:
     assert process.returncode == 0
 
     return filepath
+
+def gen_iris() -> str:
+    IRIS_DIR = "iris"
+    with open(os.path.join(IRIS_DIR, "iris.data")) as f:
+        plants = f.read().strip().split("\n")
+    plants = map(lambda p: p.split(","), plants)
+    plants = list(filter(lambda p: p, plants))
+
+    inp = os.path.join(DATA_DIR, IRIS_DIR, "iris.in")
+    os.makedirs(os.path.dirname(inp), exist_ok=True)
+    with open(inp, "w") as f:
+        f.write(f"{len(plants)} {len(plants[0])-1} 3\n")
+        for plant in plants:
+            f.write(" ".join(plant[:-1]) + "\n")
+
+    return inp
 
 
 def solve(input_path: str, solution: str, args: list[str]) -> tuple[str, float]:
@@ -84,20 +101,18 @@ def judge(judge: str, input_path: str, output_path: str) -> float:
     return float(process.communicate()[0].decode().strip())
 
 
-def test_facility_location(size: int, dim: int):
-    inp = gen(size, dim, FACILITY_COST)
+def test_facility_location(inp: str):
     for solution, args in zip(FACILITY_SOLUTIONS, FACILITY_SOLUTION_ARGS, strict=True):
-        print(f"{inp:20} {solution:20} {' '.join(args):21}", end="  ", flush=True)
+        print(f"{os.path.basename(inp):20} {solution:20} {' '.join(args):21}", end="  ", flush=True)
         out, sol_time = solve(inp, solution, args)
         result = f"{judge(FACILITY_JUDGE, inp, out):.4f}"
         print(f"{result:>10}  {sol_time:.2f}s")
     print("-"*50)
 
 
-def test_clustering(size: int, dim: int):
-    inp = gen(size, dim, CLUSTER_COUNT)
+def test_clustering(inp: str):
     for solution, args in zip(CLUSTERING_SOLUTIONS, CLUSTERING_SOLUTION_ARGS, strict=True):
-        print(f"{inp:20} {solution:20} {' '.join(args):21}", end="  ", flush=True)
+        print(f"{os.path.basename(inp):20} {solution:20} {' '.join(args):21}", end="  ", flush=True)
         out, sol_time = solve(inp, solution, args)
         with open(out) as f:
             centers = len(list(filter(lambda r: r.strip(), f.readlines())))
@@ -105,12 +120,22 @@ def test_clustering(size: int, dim: int):
         print(f"{centers:>3}  {result:>10}  {sol_time:.2f}s")
     print("-"*50)
 
+def test(target: str, inp: str):
+    if target == "fl":
+        test_facility_location(inp)
+    elif target == "cl":
+        test_clustering(inp)
+
 
 if __name__ == "__main__":
-    os.makedirs(DATA_DIR, exist_ok=True)
+    os.makedirs(os.path.join(DATA_DIR, GEN_DATA_DIR), exist_ok=True)
+    for static_gen in [gen_iris]:
+        test(args.target, static_gen())
+
     for size in SIZES:
         for dimension in DIMENSIONS:
             if args.target == "fl":
-                test_facility_location(size, dimension)
+                inp = gen(size, dimension, FACILITY_COST)
             elif args.target == "cl":
-                test_clustering(size, dimension)
+                inp = gen(size, dimension, CLUSTER_COUNT)
+            test(args.target, inp)
