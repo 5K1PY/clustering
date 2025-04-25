@@ -129,8 +129,9 @@ def test(target: str, inp: str):
 
 if __name__ == "__main__":
     os.makedirs(os.path.join(DATA_DIR, GEN_DATA_DIR), exist_ok=True)
-    for static_gen in [gen_iris]:
-        test(args.target, static_gen())
+    if args.target == "cl":
+        for static_gen in [gen_iris]:
+            test(args.target, static_gen())
 
     for size in SIZES:
         for dimension in DIMENSIONS:
