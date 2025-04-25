@@ -43,6 +43,7 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
     double opt_guess = -1;
     double min_cost = std::numeric_limits<double>::infinity();
     auto [min_d, max_d] = aspect_ratio_approx(dim, points);
+    min_d = std::max(min_d, 1.0 / scale);
     for (double guess=POWZ(min_d); guess < points.size()*POWZ(max_d); guess*=2) {
         assert(guess > 0);
         double facility_cost = guess / k;
