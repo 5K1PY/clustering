@@ -13,9 +13,16 @@ const ll scale = (ll) 1e16;
 
 double solution_cost(const std::vector<tagged_point>& points, const std::vector<point>& facilities, double facility_cost) {
     double cost = facilities.size() * facility_cost;
-    for (auto point: points) {
-        double md = min_dist(point, facilities).dist;
-        cost += POWZ(md);
+    std::vector<double> dist(points.size());
+
+    #pragma omp parallel for
+    for (size_t i=0; i<points.size(); i++) {
+        double md = min_dist(points[i], facilities).dist;
+        dist[i] = POWZ(md);
+    }
+    
+    for (double d: dist) {
+        cost += d;
     }
     return cost;
 }
