@@ -33,7 +33,7 @@ std::vector<point> gen_random(int n, int dim) {
 }
 
 std::vector<point> gen_clusters(int n, int dim) {
-    int cluster_count = 10;
+    int cluster_count = sqrt(n);
     int free_points = sqrt(n); 
 
     int all_points_sz = 0;

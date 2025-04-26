@@ -41,7 +41,6 @@ CLUSTERING_SOLUTION_ARGS = [
     ["face_hashing", "5b17b966"],
     ["face_hashing", "9a7aa40"],
 ]
-CLUSTER_COUNT = 10
 
 SIZES = [100, 1000, int(1e4), int(1e5)]
 DIMENSIONS = [2, 5, 10]
@@ -143,5 +142,5 @@ if __name__ == "__main__":
                 if args.target == "fl":
                     inp = gen(size, dimension, FACILITY_COST)
                 elif args.target == "cl":
-                    inp = gen(size, dimension, CLUSTER_COUNT)
+                    inp = gen(size, dimension, int(size**0.5))
                 test(args.target, inp)
