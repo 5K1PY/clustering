@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 
 
 def labels(inp, out, monocolor):
-    if monocolor:
+    if len(out) == 0 or monocolor:
         return ["blue"] * len(inp) + ["red"] * len(out)
     else:
         return [
@@ -16,8 +16,8 @@ def labels(inp, out, monocolor):
         ] + [-1 if len(out) < 5 else -0.5*len(out)] * len(out)
 
 
-def main(inp_path: str, out_path: str | None, monocolor: bool):
-    with open(inp_path) as inp:
+def main(args):
+    with open(args.input) as inp:
         num_points, _, _ = map(int, inp.readline().split())
 
         in_points = [
@@ -25,8 +25,8 @@ def main(inp_path: str, out_path: str | None, monocolor: bool):
             for _ in range(num_points)
         ]
 
-    if out_path is not None:
-        with open(out_path) as out:
+    if args.output is not None:
+        with open(args.output) as out:
             out_points = [
                 list(map(float, line.split()))
                 for line in out.readlines()
@@ -46,15 +46,24 @@ def main(inp_path: str, out_path: str | None, monocolor: bool):
     ax.scatter(
         reduced[:, 0],
         reduced[:, 1],
-        c=labels(in_points, out_points, monocolor)
+        c=labels(in_points, out_points, args.monocolor)
     )
 
-    plt.show()
+    plt.title(args.title)
+    plt.xlabel('Principal component 1')
+    plt.ylabel('Principal component 2')
+    if args.save is None:
+        plt.show()
+    else:
+        plt.savefig(args.save)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize data using t-SNE.")
     parser.add_argument("input", help="Path to the input file.")
     parser.add_argument("output", nargs='?', default=None, help="Path to the output.")
     parser.add_argument("--monocolor", action="store_true", help="Color the points in the input with the same color.")
+    parser.add_argument("--title", default="", help="Title of the plot")
+    parser.add_argument("--save", help="Path to file to save the plot")
     args = parser.parse_args()
-    main(args.input, args.output, args.monocolor)
+    main(args)

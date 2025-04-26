@@ -54,4 +54,9 @@ test: $(BUILD_DIR)/unittest
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: all z1 z2 clean test
+visuals:
+	./visualizer.py data/iris/iris.in --title "Iris dataset" --save img/iris.png
+	./visualizer.py data/iris/iris.in data/iris/iris.scikit_z2..out --title "Iris dataset — Scikit-learn" --save img/iris_scikit.png
+	./visualizer.py data/iris/iris.in data/iris/iris.clustering_z2.face_hashing.3c6da5d7.out --title "Iris dataset — Face hashing" --save img/iris_face_hashing.png
+
+.PHONY: all z1 z2 clean test visuals
