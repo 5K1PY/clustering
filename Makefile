@@ -57,6 +57,15 @@ clean:
 visuals:
 	./visualizer.py data/iris/iris.in --title "Iris dataset" --save img/iris.png
 	./visualizer.py data/iris/iris.in data/iris/iris.scikit_z2..out --title "Iris dataset — Scikit-learn" --save img/iris_scikit.png
-	./visualizer.py data/iris/iris.in data/iris/iris.clustering_z2.face_hashing.3c6da5d7.out --title "Iris dataset — Face hashing" --save img/iris_face_hashing.png
+	./visualizer.py data/iris/iris.in data/iris/iris.clustering_z2.face_hashing.5b17b966.out --title "Iris dataset — Face hashing" --save img/iris_face_hashing.png
+
+	./visualizer.py data/gen/gen_n1000_d5.in --title "Generated dataset (N=1000, D=5)" --save img/gen_n1000_d5.png
+	./visualizer.py data/gen/gen_n1000_d5.in data/gen/gen_n1000_d5.mettu_plaxton_z1..out --title "Generated dataset (N=1000, D=5) — Mettu-Plaxton" --save img/gen_n1000_d5_mettu_plaxton.png
+	./visualizer.py data/gen/gen_n1000_d5.in data/gen/gen_n1000_d5.facility_set_z1.face_hashing.9a7aa40.out --title "Generated dataset (N=1000, D=5) — Face hashing" --save img/gen_n1000_d5_fl_face_hashing.png
+
+	./visualizer.py data/gen/gen_n1000_d10.in --title "Generated dataset — N=1000, D=10" --save img/gen_n1000_d10.png
+	./visualizer.py data/gen/gen_n1000_d10.in --title "Generated dataset (N=1000, D=10) — Mettu-Plaxton" --save img/gen_n1000_d10.png
+	./visualizer.py data/gen/gen_n1000_d10.in --title "Generated dataset (N=1000, D=10) — Face hashing" --save img/gen_n1000_d10.png
+
 
 .PHONY: all z1 z2 clean test visuals
