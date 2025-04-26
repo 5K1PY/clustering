@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import csv
 import os
 from subprocess import Popen, PIPE
 import time
@@ -106,6 +107,7 @@ def test_facility_location(inp: str):
         out, sol_time = solve(inp, solution, args)
         result = f"{judge(FACILITY_JUDGE, inp, out):.4f}"
         print(f"{result:>10}  {sol_time:.2f}s")
+        results.writerow((os.path.basename(inp), solution, " ".join(args), result, sol_time))
     print("-"*50)
 
 
@@ -117,6 +119,7 @@ def test_clustering(inp: str):
             centers = len(list(filter(lambda r: r.strip(), f.readlines())))
         result = f"{judge(CLUSTERING_JUDGE, inp, out):.4f}"
         print(f"{centers:>3}  {result:>10}  {sol_time:.2f}s")
+        results.writerow((os.path.basename(inp), solution, " ".join(args), centers, result, sol_time))
     print("-"*50)
 
 def test(target: str, inp: str):
@@ -127,15 +130,18 @@ def test(target: str, inp: str):
 
 
 if __name__ == "__main__":
-    os.makedirs(os.path.join(DATA_DIR, GEN_DATA_DIR), exist_ok=True)
-    if args.target == "cl":
-        for static_gen in [gen_iris]:
-            test(args.target, static_gen())
+    with open(f"results_{args.target}.csv", "w") as f:
+        results = csv.writer(f)
 
-    for size in SIZES:
-        for dimension in DIMENSIONS:
-            if args.target == "fl":
-                inp = gen(size, dimension, FACILITY_COST)
-            elif args.target == "cl":
-                inp = gen(size, dimension, CLUSTER_COUNT)
-            test(args.target, inp)
+        os.makedirs(os.path.join(DATA_DIR, GEN_DATA_DIR), exist_ok=True)
+        if args.target == "cl":
+            for static_gen in [gen_iris]:
+                test(args.target, static_gen())
+
+        for size in SIZES:
+            for dimension in DIMENSIONS:
+                if args.target == "fl":
+                    inp = gen(size, dimension, FACILITY_COST)
+                elif args.target == "cl":
+                    inp = gen(size, dimension, CLUSTER_COUNT)
+                test(args.target, inp)
