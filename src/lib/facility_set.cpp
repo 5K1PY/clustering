@@ -20,7 +20,8 @@ std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, d
 
     double r_guess = 1.0 / scale;
     double beta = beta_mul * 3.0 * get_gamma(hs_choice, dim);
-    double tau = pow(beta, 0.25*Z); // TODO: Alpha is at least two?
+    double alpha = 3 * beta * beta;
+    double tau = pow(alpha * beta, 0.25*Z);
     while (find(r_approx.begin(), r_approx.end(), 0) != r_approx.end()) {
         std::vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size, hs_choice);
         std::vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel, hs_choice);
