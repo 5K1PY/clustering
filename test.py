@@ -62,8 +62,7 @@ def gen_iris() -> str:
     IRIS_DIR = "iris"
     with open(os.path.join(IRIS_DIR, "iris.data")) as f:
         plants = f.read().strip().split("\n")
-    plants = map(lambda p: p.split(","), plants)
-    plants = list(filter(lambda p: p, plants))
+    plants = list(map(lambda p: p.split(","), plants))
 
     inp = os.path.join(DATA_DIR, IRIS_DIR, "iris.in")
     os.makedirs(os.path.dirname(inp), exist_ok=True)
