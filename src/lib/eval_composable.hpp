@@ -18,7 +18,6 @@ std::vector<T> eval_composable(
         p.hash = hashing_scheme->hash(p);
     }
 
-    // TODO: Hashovat vectory
     std::unordered_map<ull, T> bucket_values;
     for (tagged_point &p: points) {
         if (bucket_values.find(p.hash) == bucket_values.end())
