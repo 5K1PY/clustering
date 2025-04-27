@@ -55,6 +55,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 visuals:
+	@mkdir -p img/
 	./visualizer.py data/iris/iris.in --title "Iris dataset" --save img/iris.svg
 	./visualizer.py data/iris/iris.in data/iris/iris.scikit_z2..out --title "Iris dataset — Scikit-learn" --save img/iris_scikit.svg
 	./visualizer.py data/iris/iris.in data/iris/iris.clustering_z2.face_hashing.5b17b966.out --title "Iris dataset — Face hashing" --save img/iris_face_hashing.svg
