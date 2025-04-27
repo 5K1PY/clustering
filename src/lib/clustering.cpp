@@ -44,11 +44,12 @@ std::vector<int> compute_clusters_seq(int dim, std::vector<tagged_point> points,
     double min_cost = std::numeric_limits<double>::infinity();
     auto [min_d, max_d] = aspect_ratio_approx(dim, points);
     min_d = std::max(min_d, 1.0 / scale);
+    double small_gamma = pow(get_gamma(hs_choice, dim), 0.1*Z);
     for (double guess=POWZ(min_d); guess < points.size()*POWZ(max_d); guess*=2) {
         assert(guess > 0);
         double facility_cost = guess / k;
         auto facilities_indexes = compute_facilities(dim, points, facility_cost, hs_choice);
-        if (facilities_indexes.size() > 2*get_gamma(hs_choice, dim)*k) continue;
+        if (facilities_indexes.size() > 2*small_gamma*k) continue;
         double cost = solution_cost(points, facilities_indexes, facility_cost);
         if (min_cost > cost) {
             min_cost = cost;
