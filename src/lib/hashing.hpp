@@ -148,9 +148,10 @@ class FaceHashing : public HashingScheme<T> {
     // TODO: Change mod to be bigger -- ideally Mersen prime
     // Choose hash_poly randomly
     ull _hash_poly, _hash_mod = ull(1e9)+7;
+
+    static constexpr double gamma_mul = 3.0; // must be >= 3.0 for theoretical guarantees
   public:
-    static double GammaMul(int dimension) { return 3.0; } // > 1 / dimension + 2
-    static double Gamma(int dimension) { return dimension * sqrt(dimension); }
+    static double Gamma(int dimension) { return gamma_mul * dimension * sqrt(dimension); }
 
     int const dimension() const { return _dimension; }
     ull const hypercube_side() const { return _hypercube_side; }
@@ -159,9 +160,7 @@ class FaceHashing : public HashingScheme<T> {
 
     FaceHashing(int dim, ull radius) {
         _dimension = dim;
-        // TODO: Rename gammamul to hypercube side mul
-        // TODO: Why the ull
-        _hypercube_side = 2.0 * ull(Gamma(dim) / sqrt(dim) * radius * GammaMul(dim));
+        _hypercube_side = 2*radius * Gamma(dim)/sqrt(dim);
         _epsilon = 2*radius;
 
         _hash_poly = std::numeric_limits<ull>::max() / (_hypercube_side/2) + 1;

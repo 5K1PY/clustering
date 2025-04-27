@@ -9,7 +9,7 @@
 #include "pow_z.hpp"
 
 // Experimental constants
-const double beta_mul = 0.1;
+const double beta_mul = 0.05;
 const double tau_exp_mul = 0.1;
 
 std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, double facility_cost, HashingSchemeChoice hs_choice) {
