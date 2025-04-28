@@ -37,7 +37,8 @@ class GridHashing : public HashingScheme<T> {
 
     ull _cell_size;
     std::vector<ull> _offsets;
-    ull _hash_poly, _hash_mod = ull(1e9)+7;
+    ull _hash_poly;
+    static constexpr ull _hash_mod = 2147483647;
   protected:
     ull inline normalize_coord(const point& p, int i) const {
         return HashingScheme<T>::normalize_coord(p, i) + _offsets[i];
@@ -61,7 +62,7 @@ class GridHashing : public HashingScheme<T> {
             _offsets[i] = randRange((ull) 0, std::numeric_limits<ull>::max());
         } 
 
-        _hash_poly = std::numeric_limits<ull>::max() / _cell_size + 1;
+        _hash_poly = randRange(2, std::numeric_limits<int>::max());
     }
 
     static GridHashing<T> manual(int dim, ull cs, const std::vector<ull> &offsets = std::vector<ull>()) {
@@ -81,6 +82,7 @@ class GridHashing : public HashingScheme<T> {
         ull hash = 0;
         for (int i=0; i<_dimension; i++) {
             hash *= _hash_poly;
+            hash %= _hash_mod;
             hash += cell[i];
             hash %= _hash_mod;
         }
@@ -145,10 +147,8 @@ class FaceHashing : public HashingScheme<T> {
 
     ull _hypercube_side;
     ull _epsilon;
-    // TODO: Change mod to be bigger -- ideally Mersen prime
-    // Choose hash_poly randomly
-    ull _hash_poly, _hash_mod = ull(1e9)+7;
-
+    ull _hash_poly;
+    static constexpr ull _hash_mod = 2147483647;
     static constexpr double gamma_mul = 3.0; // must be >= 3.0 for theoretical guarantees
   public:
     static double Gamma(int dimension) { return gamma_mul * dimension * sqrt(dimension); }
@@ -163,7 +163,7 @@ class FaceHashing : public HashingScheme<T> {
         _hypercube_side = 2*radius * Gamma(dim)/sqrt(dim);
         _epsilon = 2*radius;
 
-        _hash_poly = std::numeric_limits<ull>::max() / (_hypercube_side/2) + 1;
+        _hash_poly = randRange(2, std::numeric_limits<int>::max());
     }
 
     ull hash(const point& p) const override {
@@ -199,13 +199,14 @@ class FaceHashing : public HashingScheme<T> {
             else if (mul != -1 && alpha > _hypercube_side - mul*_epsilon)
                 p_norm[i] += _hypercube_side - alpha;
             else
-                p_norm[i] += _hypercube_side/2 - alpha;
+                p_norm[i] += (_hypercube_side+1)/2 - alpha;
         }
 
         // compute hash
         ull hash = 0;
         for (int i=0; i<_dimension; i++) {
             hash *= _hash_poly;
+            hash %= _hash_mod;
             hash += 2*p_norm[i] / _hypercube_side;
             hash %= _hash_mod;
         }
