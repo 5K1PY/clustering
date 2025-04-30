@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "pow_z.hpp"
 #include "points.hpp"
 #include "random.hpp"
 #include "composable.hpp"
