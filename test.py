@@ -98,7 +98,7 @@ def solve(input_path: str, solution: str, args: list[str]) -> tuple[str, float]:
         stdout=open(output_path, "w")
     )
     rc = process.wait()
-    total_time = time.time() - start_time # TODO: Do something better
+    total_time = time.time() - start_time
 
     assert rc == 0
 
