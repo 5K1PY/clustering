@@ -42,7 +42,7 @@ CLUSTERING_SOLUTION_ARGS = [
     ["face_hashing", "9a7aa40"],
 ]
 
-SIZES = [100, 1000, int(1e4), int(1e5)]
+SIZES = [100, 1000, int(1e4), int(1e5), int(1e6), int(1e7), int(1e8)]
 DIMENSIONS = [2, 5, 10]
 
 def gen(size: int, dimension: int, k_or_cost: float) -> str:
@@ -73,6 +73,21 @@ def gen_iris() -> str:
 
     return inp
 
+
+def gen_imdb() -> str:
+    IMDB_DIR = "maas_imdb"
+    with open(os.path.join(IMDB_DIR, "maas_imdb.csv")) as f:
+        words = csv.reader(f, delimiter=',', quotechar='"')
+        words = list(words)[1:]
+
+    inp = os.path.join(DATA_DIR, IMDB_DIR, "maas_imdb.in")
+    os.makedirs(os.path.dirname(inp), exist_ok=True)
+    with open(inp, "w") as f:
+        f.write(f"{len(words)} {len(words[0])-2} 200\n")
+        for plant in words:
+            f.write(" ".join(plant[2:]) + "\n")
+
+    return inp
 
 def solve(input_path: str, solution: str, args: list[str]) -> tuple[str, float]:
     output_path = input_path.removesuffix(".in") + f".{solution}.{'.'.join(args)}.out"
@@ -134,8 +149,7 @@ if __name__ == "__main__":
 
         os.makedirs(os.path.join(DATA_DIR, GEN_DATA_DIR), exist_ok=True)
         if args.target == "cl":
-            for static_gen in [gen_iris]:
-                test(args.target, static_gen())
+            test(args.target, gen_iris())
 
         for size in SIZES:
             for dimension in DIMENSIONS:
@@ -144,3 +158,6 @@ if __name__ == "__main__":
                 elif args.target == "cl":
                     inp = gen(size, dimension, int(size**0.5))
                 test(args.target, inp)
+
+        if args.target == "cl":
+            test(args.target, gen_imdb())
