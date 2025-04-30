@@ -12,6 +12,20 @@
 #include "random.hpp"
 #include "composable.hpp"
 
+
+struct VectorULLHash {
+    std::size_t operator()(const std::vector<ull>& v) const {
+        std::size_t hash = 0;
+        for (const auto& element : v) {
+            hash *= 1834155121; // TODO: Choose randomly
+            hash %= 2147483648;
+            hash += element;
+            hash %= 2147483648;
+        }
+        return hash;
+    }
+};
+
 template<typename T>
 class HashingScheme {
   protected:
@@ -21,12 +35,12 @@ class HashingScheme {
   public:
     virtual ~HashingScheme() = default;
 
-    virtual ull hash(const point& p) const = 0;
+    virtual std::vector<ull> hash(const point& p) const = 0;
     virtual T eval_ball(
         const tagged_point& center,
         const double radius,
         const Composable::Composable<T>& f,
-        const std::unordered_map<ull, T>& bucket_values
+        const std::unordered_map<std::vector<ull>, T, VectorULLHash>& bucket_values
     ) const = 0;
 };
 
@@ -74,19 +88,12 @@ class GridHashing : public HashingScheme<T> {
         return gh;
     }
 
-    ull hash(const point& p) const override {
+    std::vector<ull> hash(const point& p) const override {
         std::vector<ull> cell(_dimension);
         for (int i=0; i<_dimension; i++) {
             cell[i] = this->normalize_coord(p, i) / _cell_size;
         }
-        ull hash = 0;
-        for (int i=0; i<_dimension; i++) {
-            hash *= _hash_poly;
-            hash %= _hash_mod;
-            hash += cell[i];
-            hash %= _hash_mod;
-        }
-        return hash;
+        return cell;
     }
 
     bool bucket_sphere_intersect(const point& center, double radius, point bucket) const {
@@ -105,17 +112,17 @@ class GridHashing : public HashingScheme<T> {
         const tagged_point& center,
         const double radius,
         const Composable::Composable<T>& f,
-        const std::unordered_map<ull, T>& bucket_values
+        const std::unordered_map<std::vector<ull>, T, VectorULLHash>& bucket_values
     ) const override {
         T result = f.empty_value;
 
         std::queue<point> neighborhood;
         neighborhood.push(center);
-        std::unordered_set<ull> found_cells;
+        std::unordered_set<std::vector<ull>, VectorULLHash> found_cells;
 
         while (neighborhood.size()) {
             point p = neighborhood.front(); neighborhood.pop();
-            ull hash_of_p = hash(p);
+            std::vector<ull> hash_of_p = hash(p);
 
             if (found_cells.count(hash_of_p) > 0)
                 continue;
@@ -166,7 +173,7 @@ class FaceHashing : public HashingScheme<T> {
         _hash_poly = randRange(2, std::numeric_limits<int>::max());
     }
 
-    ull hash(const point& p) const override {
+    std::vector<ull> hash(const point& p) const override {
         std::vector<ull> p_norm(_dimension);
         for (int i=0; i<_dimension; i++) {
             p_norm[i] = this->normalize_coord(p, i);
@@ -202,13 +209,9 @@ class FaceHashing : public HashingScheme<T> {
                 p_norm[i] += (_hypercube_side+1)/2 - alpha;
         }
 
-        // compute hash
-        ull hash = 0;
+        std::vector<ull> hash(_dimension);
         for (int i=0; i<_dimension; i++) {
-            hash *= _hash_poly;
-            hash %= _hash_mod;
-            hash += 2*p_norm[i] / _hypercube_side;
-            hash %= _hash_mod;
+            hash[i] = 2*p_norm[i] / _hypercube_side;
         }
         return hash;
     }
@@ -217,7 +220,7 @@ class FaceHashing : public HashingScheme<T> {
         const tagged_point& center,
         const double radius,
         const Composable::Composable<T>& f,
-        const std::unordered_map<ull, T>& bucket_values
+        const std::unordered_map<std::vector<ull>, T, VectorULLHash>& bucket_values
     ) const override {
         T result = f.empty_value;
         std::vector<std::tuple<int, ull, ull>> differences(_dimension);
