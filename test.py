@@ -21,12 +21,12 @@ FACILITY_JUDGE = f"facility_set_cost_z{Z}"
 FACILITY_SOLUTIONS = [f"mettu_plaxton_z{Z}"] + [f"facility_set_z{Z}"]*6
 FACILITY_SOLUTION_ARGS = [
     [],
-    ["grid_hashing", "3c6da5d7"],
-    ["grid_hashing", "5b17b966"],
-    ["grid_hashing", "9a7aa40"],
-    ["face_hashing", "3c6da5d7"],
-    ["face_hashing", "5b17b966"],
-    ["face_hashing", "9a7aa40"],
+    ["grid_hashing", "60042651f648e052"],
+    ["grid_hashing", "c0cd4ab2b5821bc7"],
+    ["grid_hashing", "4c2331abc97fbaf3"],
+    ["face_hashing", "60042651f648e052"],
+    ["face_hashing", "c0cd4ab2b5821bc7"],
+    ["face_hashing", "4c2331abc97fbaf3"],
 ]
 FACILITY_COST = 1
 
@@ -117,7 +117,7 @@ def judge(judge: str, input_path: str, output_path: str) -> float:
 
 def test_facility_location(inp: str):
     for solution, args in zip(FACILITY_SOLUTIONS, FACILITY_SOLUTION_ARGS, strict=True):
-        print(f"{os.path.basename(inp):20} {solution:20} {' '.join(args):21}", end="  ", flush=True)
+        print(f"{os.path.basename(inp):20} {solution:20} {' '.join(args):30}", end="  ", flush=True)
         out, sol_time = solve(inp, solution, args)
         result = f"{judge(FACILITY_JUDGE, inp, out):.4f}"
         print(f"{result:>10}  {sol_time:.2f}s")
@@ -127,7 +127,7 @@ def test_facility_location(inp: str):
 
 def test_clustering(inp: str):
     for solution, args in zip(CLUSTERING_SOLUTIONS, CLUSTERING_SOLUTION_ARGS, strict=True):
-        print(f"{os.path.basename(inp):20} {solution:20} {' '.join(args):21}", end="  ", flush=True)
+        print(f"{os.path.basename(inp):20} {solution:20} {' '.join(args):30}", end="  ", flush=True)
         out, sol_time = solve(inp, solution, args)
         with open(out) as f:
             centers = len(list(filter(lambda r: r.strip(), f.readlines())))

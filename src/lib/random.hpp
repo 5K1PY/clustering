@@ -2,9 +2,11 @@
 
 #include <random>
 
+#include "types.hpp"
+
 extern std::mt19937 rng;
 
-void seed(int seed);
+void seed(ull seed);
 template<typename T> T randRange(T min, T max) {
     /**
      * @brief Generates random integer from [min, max] inclusive

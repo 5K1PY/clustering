@@ -1,10 +1,11 @@
 #include <random>
 
+#include "types.hpp"
 #include "random.hpp"
 
 std::mt19937 rng(76901);
 
-void seed(int seed) {
+void seed(ull seed) {
     rng = std::mt19937(seed);
 }
 
