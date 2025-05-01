@@ -24,7 +24,9 @@ std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, d
     while (find(r_approx.begin(), r_approx.end(), 0) != r_approx.end()) {
         std::vector<int> approx_ball_sizes = eval_composable(dim, points, r_guess, Composable::Size, hs_choice);
         std::vector<const tagged_point*> guess_min_labels = eval_composable(dim, points, r_guess, Composable::MinLabel, hs_choice);
-        for (int i=0; i<(int) points.size(); i++) {
+
+        #pragma omp parallel for
+        for (size_t i=0; i<points.size(); i++) {
             if (r_approx[i] != 0) continue;
             if (approx_ball_sizes[i] >= facility_cost / (2 * POWZ(beta) * POWZ(r_guess))) {
                 r_approx[i] = r_guess;
@@ -34,6 +36,7 @@ std::vector<int> compute_facilities(int dim, std::vector<tagged_point> points, d
                 min_labels[i] = guess_min_labels[i];
             }
         }
+
         r_guess *= 2;
     }
 
