@@ -1,5 +1,6 @@
 #include <fstream>
-#include <limits>
+#include <iomanip>
+#include <iostream>
 
 #include "lib/points.hpp"
 
@@ -20,5 +21,5 @@ int main(int argc, char const *argv[]) {
         }
     }
     double cost = solution_cost(points, centers, 0.0);
-    std::cout << cost << std::endl;
+    std::cout << std::setprecision(15) << cost << std::endl;
 }

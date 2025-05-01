@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <random>
 
@@ -65,6 +66,7 @@ int main() {
     std::vector<point> points = gen_clusters(n, dimension);
 
     std::cout << n << " " << dimension << " " << facility_cost << "\n";
+    std::cout << std::fixed << std::setprecision(10);
     for (auto p: points) {
         for (int i=0; i<dimension; i++) {
             std::cout << ((double) p[i] / scale) << (i+1 < dimension ? " " : "\n");

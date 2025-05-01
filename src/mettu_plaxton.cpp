@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+
 #include "lib/points.hpp"
 #include "lib/random.hpp"
 #include "lib/hashing.hpp"
@@ -11,6 +14,7 @@ int main(int argc, char const *argv[]) {
     calc_rps(points, facility_cost);
 
     auto chosen = mettu_plaxton(points);
+    std::cout << std::setprecision(15);
     for (auto c: chosen) {
         std::cout << points[c];
     }

@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 
 #include "lib/util.hpp"
@@ -18,6 +19,7 @@ int main(int argc, char const *argv[]) {
     auto points = load_points(n, dim);
 
     auto chosen = compute_clusters_seq(dim, points, k, hs_choice);
+    std::cout << std::setprecision(15);
     for (auto c: chosen) {
         std::cout << points[c];
     }
