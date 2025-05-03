@@ -37,7 +37,6 @@ double solution_cost(const std::vector<tagged_point>& points, const std::vector<
 }
 
 double nearest_neighbors(int dim, const std::vector<tagged_point>& points) {
-    /* Nearest neighbors using Johnson–Lindenstrauss */
     const int tries = points.size() / 1e2;
     double result = 0;
     for (int _=0; _<tries; _++) {
@@ -85,7 +84,6 @@ std::pair<double, double> aspect_ratio(int dim, const std::vector<tagged_point>&
 }
 
 std::pair<double, double> aspect_ratio_approx(int dim, const std::vector<tagged_point>& points) {
-    /* Approximation of aspect ratio in O(nd + nlogn) */
     point min_coords(dim), max_coords(dim);
     for (int i=0; i<dim; i++) {
         min_coords[i] = std::numeric_limits<ll>::max();
