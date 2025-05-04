@@ -124,7 +124,6 @@ def plot_file(filename: str):
             elif solution.startswith("scikit"):
                 solution = "K-means++ (scikit-learn)"
             else:
-                print(solution)
                 raise ValueError("Unknown solution")
 
             if inp.startswith("gen"):
