@@ -40,10 +40,8 @@ def plot_instance(title: str, values):
             xs = [v[0] for v in sol_val]
             ys = [v[val_number+2] for v in sol_val]
             ax.plot(
-                xs, ys, "x",
-                markersize=12,
+                xs, ys, "x-",
                 c=SOLUTION_COLORS[sol_name],
-                alpha=0.7,
                 label=sol_name,
             )
 
