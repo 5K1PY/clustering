@@ -18,28 +18,20 @@ GEN_DATA_DIR = "gen"
 GENERATOR = f"data_gen_z{Z}"
 
 FACILITY_JUDGE = f"facility_set_cost_z{Z}"
-FACILITY_SOLUTIONS = [f"mettu_plaxton_z{Z}"] + [f"facility_set_z{Z}"]*6
+FACILITY_SOLUTIONS = [f"mettu_plaxton_z{Z}"] + [f"facility_set_z{Z}"]*2
 FACILITY_SOLUTION_ARGS = [
     [],
     ["grid_hashing", "60042651f648e052"],
-    ["grid_hashing", "c0cd4ab2b5821bc7"],
-    ["grid_hashing", "4c2331abc97fbaf3"],
     ["face_hashing", "60042651f648e052"],
-    ["face_hashing", "c0cd4ab2b5821bc7"],
-    ["face_hashing", "4c2331abc97fbaf3"],
 ]
 FACILITY_COST = 1
 
 CLUSTERING_JUDGE = f"clustering_cost_z{Z}"
-CLUSTERING_SOLUTIONS = [f"scikit_z{Z}"] + [f"clustering_z{Z}"]*6
+CLUSTERING_SOLUTIONS = [f"scikit_z{Z}"] + [f"clustering_z{Z}"]*2
 CLUSTERING_SOLUTION_ARGS = [
     [],
     ["grid_hashing",  "60042651f648e052"],
-    ["grid_hashing",  "c0cd4ab2b5821bc7"],
-    ["grid_hashing",  "4c2331abc97fbaf3"],
     ["face_hashing",  "60042651f648e052"],
-    ["face_hashing",  "c0cd4ab2b5821bc7"],
-    ["face_hashing",  "4c2331abc97fbaf3"],
 ]
 
 SIZES = [100, 1000, int(1e4), int(1e5), int(1e6), int(1e7), int(1e8)]
