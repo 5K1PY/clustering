@@ -7,9 +7,9 @@
  * @brief Evaluates composable function on approximation of a ball A_P(p, r) for each point p∈P.
  *
  *     B_P(p, r) ⊆ A_P(p, r) ⊆ B(p, 𝛽r)
- *
+ * 
  * where 𝛽=3𝚪 and 𝚪 is a parameter of the chosen hashing scheme.
- *
+ * 
  * See https://arxiv.org/pdf/2307.07848 Algorithm 1.
  *
  * @tparam T The type of the result of composable function.
