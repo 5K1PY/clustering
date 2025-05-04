@@ -59,7 +59,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Visualize data using t-SNE.")
+    parser = argparse.ArgumentParser(description="Visualize data using PCA.")
     parser.add_argument("input", help="Path to the input file.")
     parser.add_argument("output", nargs='?', default=None, help="Path to the output.")
     parser.add_argument("--monocolor", action="store_true", help="Color the points in the input with the same color.")
