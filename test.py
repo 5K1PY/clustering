@@ -34,12 +34,12 @@ CLUSTERING_JUDGE = f"clustering_cost_z{Z}"
 CLUSTERING_SOLUTIONS = [f"scikit_z{Z}"] + [f"clustering_z{Z}"]*6
 CLUSTERING_SOLUTION_ARGS = [
     [],
-    ["grid_hashing", "3c6da5d7"],
-    ["grid_hashing", "5b17b966"],
-    ["grid_hashing", "9a7aa40"],
-    ["face_hashing", "3c6da5d7"],
-    ["face_hashing", "5b17b966"],
-    ["face_hashing", "9a7aa40"],
+    ["grid_hashing",  "60042651f648e052"],
+    ["grid_hashing",  "c0cd4ab2b5821bc7"],
+    ["grid_hashing",  "4c2331abc97fbaf3"],
+    ["face_hashing",  "60042651f648e052"],
+    ["face_hashing",  "c0cd4ab2b5821bc7"],
+    ["face_hashing",  "4c2331abc97fbaf3"],
 ]
 
 SIZES = [100, 1000, int(1e4), int(1e5), int(1e6), int(1e7), int(1e8)]

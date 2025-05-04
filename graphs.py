@@ -4,12 +4,15 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from math import log10
 import numpy as np
+import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 
-FILES = ["results_fl_z1.csv"]
+IMG_DIR = "img"
+FILES = ["results_fl_z1.csv", "results_cl_z2.csv"]
 
-VALUES = [("Cost", 1), ("Time [s]", 0.01)]
+FL_VALUES = ["Cost", "Time [s]"]
+CL_VALUES = ["Clusters"] + FL_VALUES
 SOLUTION_COLORS = {
     "Mettu-Plaxton": "red",
     "K-means++ (scikit-learn)": "red",
@@ -30,17 +33,18 @@ def plot_instance(title: str, values):
     for val in values:
         solutions[val[1]].append(val)
 
-    for val_number, (val_name, val_min) in enumerate(VALUES):
+    for val_number, val_name in enumerate(FL_VALUES if len(values[0]) == 4 else CL_VALUES):
         fig, ax = plt.subplots()
 
-        for sol_name, sol_val in solutions.items():
+        for sol_name, sol_val in reversed(solutions.items()):
             xs = [v[0] for v in sol_val]
             ys = [v[val_number+2] for v in sol_val]
             ax.plot(
                 xs, ys, "x",
-                c=SOLUTION_COLORS[sol_name],
-                label=sol_name,
                 markersize=12,
+                c=SOLUTION_COLORS[sol_name],
+                alpha=0.7,
+                label=sol_name,
             )
 
             if val_name == "Time [s]":
@@ -49,12 +53,12 @@ def plot_instance(title: str, values):
                     a = 0.00000016*d
                     b = 0.000000005*d
                     c = 0.005
-                    ax.plot(
-                        func_xs, [a*x**2 + b*x+c for x in func_xs],
-                        "--",
-                        c=SOLUTION_COLORS[sol_name],
-                        label=f"{a:.2e}*n^2+{b:.2e}*n+{c:.2e}"
-                    )
+                    # ax.plot(
+                    #     func_xs, [a*x**2 + b*x+c for x in func_xs],
+                    #     "--",
+                    #     c=SOLUTION_COLORS[sol_name],
+                    #     label=f"{a:.2e}*n^2+{b:.2e}*n+{c:.2e}"
+                    # )
                 else:
                     x_scaler = StandardScaler()
                     y_scaler = StandardScaler()
@@ -72,28 +76,33 @@ def plot_instance(title: str, values):
                     a = (sigma_y / sigma_x) * m
                     b = sigma_y * c + mu_y - (sigma_y * m * mu_x / sigma_x)
 
-                    ax.plot(
-                        func_xs, [x*a + b for x in func_xs],
-                        "--",
-                        c=SOLUTION_COLORS[sol_name],
-                        label=f"{a:.2e}*n+{b:.2e}"
-                    )
+                    # ax.plot(
+                    #     func_xs, [x*a + b for x in func_xs],
+                    #     "--",
+                    #     c=SOLUTION_COLORS[sol_name],
+                    #     label=f"{a:.2e}*n+{b:.2e}"
+                    # )
 
         plt.title(title)
-        plt.xlabel("Input size (N)")
+        plt.xlabel("Input size (n)")
         plt.ylabel(val_name)
         ax.legend()
 
         ax.set_xscale("log")
         ax.set_yscale("log")
 
-        plt.show()
+        REPLACE = {" ": "_", "(": "", ")": "", ",": "", "=": ""}
+        figname = "".join(
+            REPLACE[l] if l in REPLACE else l
+            for l in title.replace("(", val_name + " ").lower().replace(" [s]", "")
+        ) + ".svg"
+        plt.savefig(os.path.join(IMG_DIR, figname))
 
-            
+
 def plot_file(filename: str):
     global d
     plot_name = "Facility location" if "fl" in filename else "Clustering"
-    plot_name += f" (D=X, Z={filename[-5]})"
+    plot_name += f" (d=X, z={filename[-5]})"
 
     generated_dataset = defaultdict(list)
     with open(filename) as f:
@@ -125,9 +134,10 @@ def plot_file(filename: str):
                 generated_dataset[d].append((n, solution, *map(float, params)))
     
     for d, d_values in generated_dataset.items():
-        plot_instance(plot_name.replace("D=X", f"D={d}"), d_values)
+        plot_instance(plot_name.replace("d=X", f"d={d}"), d_values)
 
 if __name__ == "__main__":
+    os.makedirs(IMG_DIR, exist_ok=True)
     for file in FILES:
         plot_file(file)
 
