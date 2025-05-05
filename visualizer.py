@@ -2,18 +2,19 @@
 from random import seed, shuffle
 import argparse
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
 from sklearn.decomposition import PCA
 
 
-def labels(inp, out, monocolor):
+def groups(inp, out, monocolor):
     if len(out) == 0 or monocolor:
-        return ["blue"] * len(inp) + ["red"] * len(out)
+        return [0] * len(inp)
     else:
         return [
             min(range(len(out)), key=lambda i: np.linalg.norm(p - out[i]))
             for p in inp
-        ] + [-1 if len(out) < 5 else -0.5*len(out)] * len(out)
+        ]
 
 
 def main(args):
@@ -43,15 +44,47 @@ def main(args):
     pca = PCA(n_components=2, random_state=42)
     reduced = pca.fit_transform(data)
     fig, ax = plt.subplots()
-    ax.scatter(
-        reduced[:, 0],
-        reduced[:, 1],
-        c=labels(in_points, out_points, args.monocolor)
-    )
+    
+    cmap = plt.get_cmap("viridis")
+
+    # Plot input
+    INP_LABEL = "input point"
+    if len(out_points) == 0:
+        inp_legend = []
+        ax.scatter(
+            reduced[:len(in_points), 0],
+            reduced[:len(in_points), 1],
+            color="blue",
+            label=INP_LABEL
+        )
+    else:
+        ax.scatter(
+            reduced[:len(in_points), 0],
+            reduced[:len(in_points), 1],
+            c=[
+                cmap(0.4+g/len(out_points)/(1 if len(out_points) < 5 else 1.5))
+                for g in groups(in_points, out_points, args.monocolor)
+            ]
+        )
+        # Create legend marker manually
+        inp_legend = [Line2D([0], [0], marker='o', markerfacecolor='white', markeredgecolor='black', linestyle='None', label=INP_LABEL)]
+
+    # Plot centers
+    if args.output is not None:
+        ax.scatter(
+            reduced[len(in_points):, 0],
+            reduced[len(in_points):, 1],
+            c=[0]*len(out_points),
+            marker="+",
+            label="opened facility" if "mettu" in args.output or "facility" in args.output else "cluster center"  # XXX: Ugly hack
+        )
 
     plt.title(args.title)
     plt.xlabel('Principal component 1')
     plt.ylabel('Principal component 2')
+
+    ax.legend(handles=inp_legend + ax.get_legend_handles_labels()[0])
+    
     if args.save is None:
         plt.show()
     else:
