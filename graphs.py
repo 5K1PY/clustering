@@ -19,6 +19,12 @@ SOLUTION_COLORS = {
     "Grid hashing": "blue",
     "Face hashing": "green"
 }
+SOLUTION_MARKER = {
+    "Mettu-Plaxton": "o",
+    "K-means++ (scikit-learn)": "o",
+    "Grid hashing": "^",
+    "Face hashing": "v"
+}
 
 def get_color(args: list[str]):
     if len(args) == 0:
@@ -40,7 +46,7 @@ def plot_instance(title: str, values):
             xs = [v[0] for v in sol_val]
             ys = [v[val_number+2] for v in sol_val]
             ax.plot(
-                xs, ys, "x-",
+                xs, ys, SOLUTION_MARKER[sol_name] + "-",
                 c=SOLUTION_COLORS[sol_name],
                 label=sol_name,
             )
