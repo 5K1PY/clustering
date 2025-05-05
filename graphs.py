@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 
 IMG_DIR = "img"
-FILES = ["results_fl_z1.csv", "results_cl_z2.csv"]
+FILES = ["results_fl_z1.csv", "results_cl_z1.csv", "results_cl_z2.csv"]
 
 FL_VALUES = ["Cost", "Time [s]"]
 CL_VALUES = ["Clusters"] + FL_VALUES
@@ -101,6 +101,7 @@ def plot_instance(title: str, values):
             for l in title.replace("(", val_name + " ").lower().replace(" [s]", "")
         ) + ".svg"
         plt.savefig(os.path.join(IMG_DIR, figname))
+        plt.close()
 
 
 def plot_file(filename: str):
