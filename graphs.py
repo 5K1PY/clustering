@@ -51,42 +51,6 @@ def plot_instance(title: str, values):
                 label=sol_name,
             )
 
-            if val_name == "Time [s]":
-                func_xs = np.logspace(log10(min(xs)), log10(max(xs)), 100)
-                if sol_name == "Mettu-Plaxton":
-                    a = 0.00000016*d
-                    b = 0.000000005*d
-                    c = 0.005
-                    # ax.plot(
-                    #     func_xs, [a*x**2 + b*x+c for x in func_xs],
-                    #     "--",
-                    #     c=SOLUTION_COLORS[sol_name],
-                    #     label=f"{a:.2e}*n^2+{b:.2e}*n+{c:.2e}"
-                    # )
-                else:
-                    x_scaler = StandardScaler()
-                    y_scaler = StandardScaler()
-                    x_scaled = x_scaler.fit_transform(np.array(xs).reshape(-1, 1))
-                    y_scaled = y_scaler.fit_transform(np.array(ys).reshape(-1, 1))
-                    lr = LinearRegression()
-                    lr.fit(x_scaled, y_scaled)
-
-                    mu_x = x_scaler.mean_[0]
-                    sigma_x = x_scaler.scale_[0]
-                    mu_y = y_scaler.mean_[0]
-                    sigma_y = y_scaler.scale_[0]
-                    m = lr.coef_[0][0]
-                    c = lr.intercept_[0]
-                    a = (sigma_y / sigma_x) * m
-                    b = sigma_y * c + mu_y - (sigma_y * m * mu_x / sigma_x)
-
-                    # ax.plot(
-                    #     func_xs, [x*a + b for x in func_xs],
-                    #     "--",
-                    #     c=SOLUTION_COLORS[sol_name],
-                    #     label=f"{a:.2e}*n+{b:.2e}"
-                    # )
-
         plt.title(title)
         plt.xlabel("Input size (n)")
         plt.ylabel(val_name)
