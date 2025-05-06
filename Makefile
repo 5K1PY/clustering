@@ -20,14 +20,14 @@ TARGET_NAMES = data_gen mettu_plaxton facility_set facility_set_cost clustering 
 TARGETS_Z1 = $(patsubst %,$(BUILD_DIR)/%_z1,$(TARGET_NAMES))
 TARGETS_Z2 = $(patsubst %,$(BUILD_DIR)/%_z2,$(TARGET_NAMES))
 
-EXTERNAL_NAMES_Z2 = scikit
-EXTERNAL_Z2 = $(patsubst %,$(BUILD_DIR)/%_z2,$(EXTERNAL_NAMES_Z2))
+EXTERNAL_NAMES = scikit_z1 scikit_z2
+EXTERNAL = $(patsubst %,$(BUILD_DIR)/%,$(EXTERNAL_NAMES))
 
 $(shell mkdir -p $(BUILD_DIR) $(LIB_OBJ_DIR_Z1) $(LIB_OBJ_DIR_Z2))
 
 all: z1 z2
 z1: $(TARGETS_Z1)
-z2: $(TARGETS_Z2) $(EXTERNAL_Z2)
+z2: $(TARGETS_Z2) $(EXTERNAL)
 
 $(LIB_OBJ_DIR_Z1)/%.o: $(SRC_DIR)/lib/%.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -44,7 +44,7 @@ $(BUILD_DIR)/%_z1: $(SRC_DIR)/%.cpp $(LIB_OBJECTS_Z1)
 $(BUILD_DIR)/%_z2: $(SRC_DIR)/%.cpp $(LIB_OBJECTS_Z2)
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LIB_OBJECTS_Z2)
 
-$(BUILD_DIR)/scikit_z2: $(EXTERNAL_DIR)/scikit.py
+$(BUILD_DIR)/scikit_z%: $(EXTERNAL_DIR)/scikit_z%.py
 	cp $< $@
 	chmod u+x $@
 
