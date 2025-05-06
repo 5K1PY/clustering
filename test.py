@@ -27,14 +27,13 @@ FACILITY_SOLUTION_ARGS = [
 FACILITY_COST = 1
 
 CLUSTERING_JUDGE = f"clustering_cost_z{Z}"
-CLUSTERING_SOLUTIONS = [f"scikit_z{Z}"] + [f"clustering_z{Z}"]*2
-CLUSTERING_SOLUTION_ARGS = [
-    [],
+CLUSTERING_SOLUTIONS = [f"scikit_z{Z}"]*(2 if Z == 1 else 1) + [f"clustering_z{Z}"]*2
+CLUSTERING_SOLUTION_ARGS = ([["alternate"], ["pam"]] if Z == 1 else [[""]]) + [
     ["grid_hashing",  "60042651f648e052"],
     ["face_hashing",  "60042651f648e052"],
 ]
 
-SIZES = [100, 1000, int(1e4), int(1e5), int(1e6), int(1e7), int(1e8)]
+SIZES = [100, 500, 1000, 5000, int(1e4), int(5e4), int(1e5), int(5e5), int(1e6)]
 DIMENSIONS = [2, 5, 10]
 
 def gen(size: int, dimension: int, k_or_cost: float) -> str:
