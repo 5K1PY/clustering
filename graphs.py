@@ -15,12 +15,14 @@ FL_VALUES = ["Cost", "Time [s]"]
 CL_VALUES = ["Clusters"] + FL_VALUES
 SOLUTION_COLORS = {
     "Mettu-Plaxton": "red",
+    "K-medoids (scikit-learn-extra)": "red",
     "K-means++ (scikit-learn)": "red",
     "Grid hashing": "blue",
     "Face hashing": "green"
 }
 SOLUTION_MARKER = {
     "Mettu-Plaxton": "o",
+    "K-medoids (scikit-learn-extra)": "o",
     "K-means++ (scikit-learn)": "o",
     "Grid hashing": "^",
     "Face hashing": "v"
@@ -94,7 +96,10 @@ def plot_file(filename: str):
             elif solution.startswith("mettu_plaxton"):
                 solution = "Mettu-Plaxton"
             elif solution.startswith("scikit"):
-                solution = "K-means++ (scikit-learn)"
+                if solution == "scikit_z1":
+                    solution = "K-medoids (scikit-learn-extra)"
+                else:
+                    solution = "K-means++ (scikit-learn)"
             else:
                 raise ValueError("Unknown solution")
 
