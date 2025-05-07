@@ -167,6 +167,9 @@ class FaceHashing : public HashingScheme<T> {
         _hash_poly = randRange(2, std::numeric_limits<int>::max());
     }
 
+    // Note that unlike in theory, we don't allow equality in inequalities
+    // as this makes the division slightly simpler.
+
     ull hash(const point& p) const override {
         std::vector<ull> p_norm(_dimension);
         for (int i=0; i<_dimension; i++) {
