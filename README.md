@@ -1,5 +1,5 @@
 # Clustering
-Implementation of [clustering algorithm](https://arxiv.org/pdf/2307.07848).
+Implementation of [parallel clustering algorithms](https://arxiv.org/pdf/2307.07848).
 
 ## Usage
 First, compile required programs:
