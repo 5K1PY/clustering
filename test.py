@@ -135,7 +135,7 @@ def test(target: str, inp: str):
 
 
 if __name__ == "__main__":
-    with open(f"results_{args.target}_z{Z}.csv", "w") as f:
+    with open(f"results_{args.target}_z{Z}.csv", "a") as f:
         results = csv.writer(f)
 
         os.makedirs(os.path.join(DATA_DIR, GEN_DATA_DIR), exist_ok=True)
