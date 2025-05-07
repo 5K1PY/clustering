@@ -22,3 +22,21 @@ To run unit tests:
 ```bash
 make test
 ```
+
+## Visualizations
+
+All visualizations can be generated with `make`:
+```bash
+make visuals
+```
+
+Is is also possible to generate specific visualizations. The visualizing script is run:
+```bash
+./visualizer.py <input> [output]
+```
+(or use `--help` to get info about even more options)
+
+Additionally, graphs can be separately generated from `results_*.csv` files:
+```bash
+./graphs.py
+```
