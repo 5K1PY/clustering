@@ -10,7 +10,7 @@
  * @param facility_cost The cost per one opened facility.
  * @return r_p of the given point if only k closest points existed
  */
-double calc_rp_first_k(std::vector<tagged_point>& points, tagged_point from, int k, double facility_cost);
+double calc_rp_first_k(const std::vector<tagged_point>& points, tagged_point from, int k, double facility_cost);
 
 /**
  * @brief Calculates r_p for a single point in O(nlogn).
@@ -19,7 +19,7 @@ double calc_rp_first_k(std::vector<tagged_point>& points, tagged_point from, int
  * @param facility_cost The cost per one opened facility.
  * @return r_p of the given point
  */
-double calc_rp(std::vector<tagged_point>& points, int from, double facility_cost);
+double calc_rp(const std::vector<tagged_point>& points, int from, double facility_cost);
 
 /**
  * @brief Calculates r_p for all points in O(n^2logn).
@@ -35,4 +35,4 @@ void calc_rps(std::vector<tagged_point>& points, double facility_cost);
  * @param original_points The set of points. Points must have their r_ps already set.
  * @return Set of facilities as indexes into the set of points.
  */
-std::vector<int> mettu_plaxton(std::vector<tagged_point>& original_points);
+std::vector<int> mettu_plaxton(const std::vector<tagged_point>& original_points);
