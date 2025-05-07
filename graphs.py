@@ -15,14 +15,16 @@ FL_VALUES = ["Cost", "Time [s]"]
 CL_VALUES = ["Clusters"] + FL_VALUES
 SOLUTION_COLORS = {
     "Mettu-Plaxton": "red",
-    "K-medoids (scikit-learn-extra)": "red",
+    "K-medoids alternate (scikit-learn-extra)": "red",
+    "K-medoids PAM (scikit-learn-extra)": "orange",
     "K-means++ (scikit-learn)": "red",
     "Grid hashing": "blue",
     "Face hashing": "green"
 }
 SOLUTION_MARKER = {
     "Mettu-Plaxton": "o",
-    "K-medoids (scikit-learn-extra)": "o",
+    "K-medoids alternate (scikit-learn-extra)": "o",
+    "K-medoids PAM (scikit-learn-extra)": "d",
     "K-means++ (scikit-learn)": "o",
     "Grid hashing": "^",
     "Face hashing": "v"
@@ -97,7 +99,13 @@ def plot_file(filename: str):
                 solution = "Mettu-Plaxton"
             elif solution.startswith("scikit"):
                 if solution == "scikit_z1":
-                    solution = "K-medoids (scikit-learn-extra)"
+                    solution = "K-medoids "
+                    if args[0] == "alternate":
+                        solution += "alternate"
+                    else:
+                        solution += "PAM"
+                    solution += " (scikit-learn-extra)"
+                        
                 else:
                     solution = "K-means++ (scikit-learn)"
             else:
