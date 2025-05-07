@@ -76,7 +76,7 @@ def plot_instance(title: str, values):
 
 def plot_file(filename: str):
     global d
-    plot_name = "Facility location" if "fl" in filename else "Clustering"
+    plot_name = "Facility Location" if "fl" in filename else "Clustering"
     plot_name += f" ($$, z={filename[-5]})"
 
     by_dimension = defaultdict(list)
