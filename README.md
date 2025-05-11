@@ -1,6 +1,19 @@
 # Clustering
 Implementation of [parallel clustering algorithms](https://arxiv.org/pdf/2307.07848).
 
+## Installation
+
+This project needs a few python libraries to run. Using [python's virtual environment](https://docs.python.org/3/library/venv.html) is recommended.
+```bash
+pip install matplotlib scikit-learn scikit-learn-extra
+```
+
+It is also possible that [`scikit-learn-extra` does not work with `numpy` of too high version](https://github.com/scikit-learn-contrib/scikit-learn-extra/issues/178).
+You can then install older `numpy` with:
+```bash
+pip install -v "numpy<2.0"
+```
+
 ## Usage
 First, compile required programs:
 
