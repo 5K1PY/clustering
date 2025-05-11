@@ -87,11 +87,11 @@ class GridHashing : public HashingScheme<T> {
      * @param dim The dimension of the space.
      * @param radius The radius for subsequent calls to `eval_ball`.
      */
-    GridHashing(int dim, ull radius) {
+    GridHashing(int dim, double radius) {
         _dimension = dim;
         // Setting cell_size to be dim-times bigger actually provides
         // great speedup with better results
-        _cell_size = dim * 2.0 * radius;
+        _cell_size = dim * 2.0 * radius * scale;
 
         _offsets.resize(_dimension, 0);
         for (int i=0; i<_dimension; i++) {
@@ -235,10 +235,10 @@ class FaceHashing : public HashingScheme<T> {
      * @param dim The dimension of the space.
      * @param radius The radius for subsequent calls to `eval_ball`.
      */
-    FaceHashing(int dim, ull radius) {
+    FaceHashing(int dim, double radius) {
         _dimension = dim;
-        _hypercube_side = 2*radius * Gamma(dim)/sqrt(dim);
-        _epsilon = 2*radius;
+        _hypercube_side = 2*radius*scale * Gamma(dim)/sqrt(dim);
+        _epsilon = 2*radius*scale;
 
         _hash_poly = randRange(2, std::numeric_limits<int>::max());
     }
@@ -384,7 +384,7 @@ double get_gamma(const HashingSchemeChoice hs_choice, int dimension);
  * @return Hashing scheme instance
  */
 template<typename T>
-std::unique_ptr<HashingScheme<T>> make_hashing_scheme(HashingSchemeChoice hs_choice, int dimension, ull radius) {
+std::unique_ptr<HashingScheme<T>> make_hashing_scheme(HashingSchemeChoice hs_choice, int dimension, double radius) {
     switch (hs_choice) {
         case GridHashingScheme: return std::make_unique<GridHashing<T>>(dimension, radius);
         case FaceHashingScheme: return std::make_unique<FaceHashing<T>>(dimension, radius);

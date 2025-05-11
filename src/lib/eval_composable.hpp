@@ -28,7 +28,7 @@ std::vector<T> eval_composable(
     const Composable::Composable<T>& f,
     HashingSchemeChoice hs_choice
 ) {
-    std::unique_ptr<HashingScheme<T>> hashing_scheme = make_hashing_scheme<T>(hs_choice, dim, radius * scale);
+    std::unique_ptr<HashingScheme<T>> hashing_scheme = make_hashing_scheme<T>(hs_choice, dim, radius);
 
     #pragma omp parallel for
     for (tagged_point &p: points) {
