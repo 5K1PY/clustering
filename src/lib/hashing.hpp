@@ -13,6 +13,11 @@
 #include "random.hpp"
 #include "composable.hpp"
 
+/**
+ * @brief Base class for consistent geometric hashing scheme implementations.
+ *
+ * @tparam T The type of the result of composable function for ball evaluation.
+ */
 template<typename T>
 class HashingScheme {
   protected:
@@ -22,7 +27,25 @@ class HashingScheme {
   public:
     virtual ~HashingScheme() = default;
 
+    /**
+     * @brief For a given point, gives a hash representing the bucket it belongs to.
+     *
+     * @param point The point to hash.
+     * @return The hash value of the bucket.
+     */
     virtual ull hash(const point& p) const = 0;
+
+    /**
+     * @brief Evaluates a composable function f on approximation of a ball A_P(p, r).
+     *
+     *     B_P(p, r) ⊆ A_P(p, r) ⊆ B(p, 3𝚪r)
+     *
+     * @param center The center of the approximated ball.
+     * @param radius The radius r determining size of the approximated ball. Must be ≤ `radius` used in construction.
+     * @param f The composable function to evaluate.
+     * @param bucket_values The results of composable function on each bucket separately.
+     * @return The vector of results of f on each A_P(p, r).
+     */
     virtual T eval_ball(
         const tagged_point& center,
         const double radius,
@@ -31,6 +54,12 @@ class HashingScheme {
     ) const = 0;
 };
 
+/**
+ * @brief Consistent geometric hashing implemented by partitioning space into hypercubes.
+ *        Simple, but with bad parameters for high dimension (𝚪=2√d, Λ = 2^d)
+ *
+ * @tparam T The type of the result of composable function for ball evaluation.
+ */
 template<typename T>
 class GridHashing : public HashingScheme<T> {
   private:
@@ -52,6 +81,12 @@ class GridHashing : public HashingScheme<T> {
     const ull hash_poly() const { return _hash_poly; }
     const ull hash_mod() const { return _hash_mod; }
 
+    /**
+     * @brief Constructs a GridHashing instance.
+     *
+     * @param dim The dimension of the space.
+     * @param radius The radius for subsequent calls to `eval_ball`.
+     */
     GridHashing(int dim, ull radius) {
         _dimension = dim;
         // Setting cell_size to be dim-times bigger actually provides
@@ -66,6 +101,7 @@ class GridHashing : public HashingScheme<T> {
         _hash_poly = randRange(2, std::numeric_limits<int>::max());
     }
 
+    // Fot testing purposes only
     static GridHashing<T> manual(int dim, ull cs, const std::vector<ull> &offsets = std::vector<ull>()) {
         GridHashing<T> gh(dim, 1);
         gh._cell_size = cs;
@@ -75,6 +111,12 @@ class GridHashing : public HashingScheme<T> {
         return gh;
     }
 
+    /**
+     * @brief For a given point, gives a hash representing the bucket it belongs to. Takes O(d) time.
+     *
+     * @param point The point to hash.
+     * @return The hash value of the bucket.
+     */
     ull hash(const point& p) const override {
         std::vector<ull> cell(_dimension);
         for (int i=0; i<_dimension; i++) {
@@ -90,6 +132,15 @@ class GridHashing : public HashingScheme<T> {
         return hash;
     }
 
+
+    /**
+     * @brief Determines whether bucket intersects with a sphere
+     *
+     * @param center The center of the sphere.
+     * @param radius The radius of the sphere.
+     * @param point A point in the bucket.
+     * @return `true` if bucket and sphere intersect, `false` otherwise
+     */
     bool bucket_sphere_intersect(const point& center, double radius, point bucket) const {
         for (int i=0; i<_dimension; i++) {
             ull offset = normalize_coord(bucket, i) % _cell_size;
@@ -102,6 +153,19 @@ class GridHashing : public HashingScheme<T> {
         return center.dist_squared(bucket) <= radius * radius;
     }
 
+    /**
+     * @brief Evaluates a composable function f on approximation of a ball A_P(p, r).
+     *
+     *     B_P(p, r) ⊆ A_P(p, r) ⊆ B(p, 3𝚪r)
+     *
+     * Uses bfs to find all intersecting buckets. Takes O(2^d d^2) time.
+     *
+     * @param center The center of the approximated ball.
+     * @param radius The radius r determining size of the approximated ball. Must be ≤ `radius` used in construction.
+     * @param f The composable function to evaluate.
+     * @param bucket_values The results of composable function on each bucket separately.
+     * @return The vector of results of f on each A_P(p, r).
+     */
     T eval_ball(
         const tagged_point& center,
         const double radius,
@@ -141,6 +205,12 @@ class GridHashing : public HashingScheme<T> {
     }
 };
 
+/**
+ * @brief Consistent geometric hashing constructed by repeatedly taking thinner neighborhoods
+ *        of hypercube faces. (𝚪=2√d, Λ = 2^d)
+ *
+ * @tparam T The type of the result of composable function for ball evaluation.
+ */
 template<typename T>
 class FaceHashing : public HashingScheme<T> {
   private:
@@ -159,6 +229,12 @@ class FaceHashing : public HashingScheme<T> {
     ull const hash_poly() const { return _hash_poly; }
     ull const hash_mod() const { return _hash_mod; }
 
+    /**
+     * @brief Constructs a FaceHashing instance.
+     *
+     * @param dim The dimension of the space.
+     * @param radius The radius for subsequent calls to `eval_ball`.
+     */
     FaceHashing(int dim, ull radius) {
         _dimension = dim;
         _hypercube_side = 2*radius * Gamma(dim)/sqrt(dim);
@@ -167,9 +243,12 @@ class FaceHashing : public HashingScheme<T> {
         _hash_poly = randRange(2, std::numeric_limits<int>::max());
     }
 
-    // Note that unlike in theory, we don't allow equality in inequalities
-    // as this makes the division slightly simpler.
-
+    /**
+     * @brief For a given point, gives a hash representing the bucket it belongs to. Takes O(d) time.
+     *
+     * @param point The point to hash.
+     * @return The hash value of the bucket.
+     */
     ull hash(const point& p) const override {
         std::vector<ull> p_norm(_dimension);
         for (int i=0; i<_dimension; i++) {
@@ -182,6 +261,8 @@ class FaceHashing : public HashingScheme<T> {
             ull delta = p_norm[i] % _hypercube_side;
             delta = std::min(delta, _hypercube_side - delta);
 
+            // Note that unlike in theory, we don't allow equality in inequalities
+            // as this makes the division slightly simpler.
             epsilon_multiply[std::min(int(delta/_epsilon), _dimension)]++;
         }
 
@@ -217,6 +298,20 @@ class FaceHashing : public HashingScheme<T> {
         return hash;
     }
 
+    /**
+     * @brief Evaluates a composable function f on approximation of a ball A_P(p, r).
+     *
+     *     B_P(p, r) ⊆ A_P(p, r) ⊆ B(p, 3𝚪r)
+     *
+     * As there are at most d+1 buckets that can intersect a ball, we can construct them directly.
+     * Takes total O(d^2) time.
+     *
+     * @param center The center of the approximated ball.
+     * @param radius The radius r determining size of the approximated ball. Must be ≤ `radius` used in construction.
+     * @param f The composable function to evaluate.
+     * @param bucket_values The results of composable function on each bucket separately.
+     * @return The vector of results of f on each A_P(p, r).
+     */
     T eval_ball(
         const tagged_point& center,
         const double radius,
@@ -263,10 +358,31 @@ class FaceHashing : public HashingScheme<T> {
     }
 };
 
+
+/**
+ * @brief Represent a choice of hashing scheme.
+ * - GridHashingScheme translates to GridHashing<T>
+ * - FaceHashingScheme translates to FaceHashing<T>
+ */
 enum HashingSchemeChoice {GridHashingScheme, FaceHashingScheme};
 
+/**
+ * @brief Gets gamma for hashing scheme choice
+ *
+ * @param hs_choice The choice of the hashing scheme.
+ * @param dimension The dimension of the space.
+ * @return The 𝚪 parameter of the hashing scheme.
+ */
 double get_gamma(const HashingSchemeChoice hs_choice, int dimension);
 
+/**
+ * @brief Creates hashing scheme of choice with given parameters.
+ *
+ * @param hs_choice The choice of the hashing scheme.
+ * @param dimension The dimension of the space.
+ * @param radius Radius of balls for subsequent calls of eval_ball. Construct hashing scheme such that r = ℓ/1𝚪.
+ * @return Hashing scheme instance
+ */
 template<typename T>
 std::unique_ptr<HashingScheme<T>> make_hashing_scheme(HashingSchemeChoice hs_choice, int dimension, ull radius) {
     switch (hs_choice) {
@@ -276,4 +392,10 @@ std::unique_ptr<HashingScheme<T>> make_hashing_scheme(HashingSchemeChoice hs_cho
     }
 }
 
+/**
+ * @brief Converts hashing scheme choice from string to enum.
+ *
+ * @param choice Hashing scheme choice represented as string
+ * @return Hashing scheme choice represented as enum
+ */
 HashingSchemeChoice choose_hashing_scheme(std::string choice);
