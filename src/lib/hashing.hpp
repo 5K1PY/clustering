@@ -267,7 +267,7 @@ class FaceHashing : public HashingScheme<T> {
         }
 
         // find face dimension
-        int mul = -1;
+        int mul = 0;
         int points_within = 0;
         for (int x=1; x<=_dimension; x++) {
             points_within += epsilon_multiply[x-1];
